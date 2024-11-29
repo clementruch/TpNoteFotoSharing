@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS utilisateur (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
 
+
 -- Table for photos
 CREATE TABLE IF NOT EXISTS photo (
                                      id BIGINT AUTO_INCREMENT PRIMARY KEY,
