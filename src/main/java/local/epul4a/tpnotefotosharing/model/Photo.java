@@ -5,46 +5,42 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 public class Photo {
+    // Getters and setters
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String name;
-    private enum visibility{Private,Public};
+    private String title;
+    public enum Visibility{Private,Public};
+    private Visibility visibility;
     private String description;
+    private String url;
 
     // Constructors
     public Photo() {}
 
-    public Photo(String name,enum visibility, String description) {
-        this.name = name;
+    public Photo(String title,Visibility visibility, String description, String url) {
+        this.title = title;
         this.visibility = visibility;
         this.description = description;
-    }
-
-    // Getters and setters
-    public Long getId() {
-        return id;
+        this.url=url;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
-
-    public String getTitle() {
-        return title;
-    }
+    public Long getId(){return id;}
 
     public void setTitle(String title) {
         this.title = title;
     }
+    public String getTitle(){return title;}
 
-    public String getUrl() {
-        return url;
+    public Visibility getVisibility() {
+        return visibility;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
     public String getDescription() {
@@ -54,4 +50,6 @@ public class Photo {
     public void setDescription(String description) {
         this.description = description;
     }
+    public String getUrl(){return url;}
+    public void setUrl(String url){this.url=url;}
 }
