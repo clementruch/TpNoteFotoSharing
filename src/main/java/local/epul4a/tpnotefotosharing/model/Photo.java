@@ -15,6 +15,9 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
+    private byte[] image;
+
     @Column(nullable = false)
     private String title;
 

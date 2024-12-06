@@ -57,8 +57,15 @@
     <label for="file">Télécharger la photo:</label>
     <input type="file" id="file" name="file" accept="image/*" required><br>
 
+    <label for="visibility">Visibilité :</label>
+    <select id="visibility" name="visibility" th:field="*{visibility}" required>
+        <option value="PUBLIC">Public</option>
+        <option value="PRIVATE">Privée</option>
+    </select><br>
+
     <button type="submit">Ajouter la Photo</button>
 </form>
+
 
 </body>
 </html>

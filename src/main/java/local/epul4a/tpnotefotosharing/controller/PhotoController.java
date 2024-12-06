@@ -25,14 +25,14 @@ public class PhotoController {
     }
 
     // Méthode pour afficher le formulaire d'ajout de photo
-    @GetMapping("/photos/add")
+    @GetMapping("/photo/addPhoto")
     public String showAddPhotoForm(Model model) {
         model.addAttribute("photo", new Photo());  // Créer un nouvel objet Photo et l'ajouter au modèle
         return "addPhoto";  // Nom de la vue pour ajouter une photo
     }
 
     // Méthode pour ajouter une nouvelle photo après soumission du formulaire
-    @PostMapping("/photos/add")
+    @PostMapping("/photo/addPhoto")
     public String addPhoto(@ModelAttribute Photo photo) {
         // Enregistrer la photo dans la base de données via le repository
         photoRepository.save(photo);
