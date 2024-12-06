@@ -1,7 +1,6 @@
 package local.epul4a.tpnotefotosharing.service;
 
 import local.epul4a.tpnotefotosharing.model.Photo;
-import local.epul4a.tpnotefotosharing.model.User;
 import local.epul4a.tpnotefotosharing.repository.PhotoRepository;
 import local.epul4a.tpnotefotosharing.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 
 
 @Service
@@ -39,8 +37,6 @@ public class PhotoService {
         // Sauvegarder le fichier sur le serveur
         String filePath = saveFile(file);
 
-        // Récupérer l'utilisateur
-        User owner = userRepository.findById(ownerId).orElseThrow(() -> new RuntimeException("User not found"));
 
         // Créer un objet Photo et l'enregistrer dans la base de données
         Photo photo = new Photo();
@@ -48,7 +44,6 @@ public class PhotoService {
         photo.setDescription(description);
         photo.setUrl(filePath);
         photo.setVisibility(Photo.Visibility.valueOf(visibility));
-        photo.setOwner(owner.getRole());
 
         return photoRepository.save(photo);
     }
@@ -77,7 +72,4 @@ public class PhotoService {
         return filePath.toString();  // Retourne le chemin du fichier
     }
 
-    public List<Photo> getPhotosByUser(Long userId) {
-        return photoRepository.findByOwnerId(userId);
-    }
 }

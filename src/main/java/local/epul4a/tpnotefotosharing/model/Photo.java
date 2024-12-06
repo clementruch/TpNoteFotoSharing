@@ -9,17 +9,10 @@ public class Photo {
     private Long id;
     private String title;
 
-    public void setOwner(User.Role owner) {
-        this.owner=owner;
-    }
-
     public enum Visibility{Private,Public};
     private Visibility visibility;
     private String description;
     private String url;
-    @ManyToOne
-    @JoinColumn(name = "owner_id")  // La relation ManyToOne avec User, associée à la colonne 'owner_id' dans la base de données
-    private User.Role owner;
 
     // Constructors
     public Photo() {}
