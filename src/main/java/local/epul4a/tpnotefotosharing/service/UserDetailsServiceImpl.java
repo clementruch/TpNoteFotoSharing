@@ -1,8 +1,7 @@
 package local.epul4a.tpnotefotosharing.service;
 
-import local.epul4a.tpnotefotosharing.model.Utilisateur;
-import local.epul4a.tpnotefotosharing.repository.UtilisateurRepository;
-import org.springframework.security.core.userdetails.User;
+import local.epul4a.tpnotefotosharing.model.User;
+import local.epul4a.tpnotefotosharing.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -10,19 +9,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
 
-    private final UtilisateurRepository utilisateurRepository;
+    private final UserRepository userRepository;
 
-    public UserDetailsServiceImpl(UtilisateurRepository utilisateurRepository) {
-        this.utilisateurRepository = utilisateurRepository;
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Utilisateur utilisateur = utilisateurRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
+        // Fetch user from database
+        local.epul4a.tpnotefotosharing.model.User utilisateur = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé: " + username));
 
-        return User.withUsername(utilisateur.getUsername())
-                .password(utilisateur.getPasswordHash())
+        return org.springframework.security.core.userdetails.User.withUsername(utilisateur.getUsername())
+                .password(utilisateur.getPassword())
                 .roles(utilisateur.getRole().name())
                 .build();
     }

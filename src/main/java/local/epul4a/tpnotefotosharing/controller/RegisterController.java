@@ -1,7 +1,7 @@
 package local.epul4a.tpnotefotosharing.controller;
 
-import local.epul4a.tpnotefotosharing.model.Utilisateur;
-import local.epul4a.tpnotefotosharing.service.UtilisateurService;
+import local.epul4a.tpnotefotosharing.model.User;
+import local.epul4a.tpnotefotosharing.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class RegisterController {
 
-    private final UtilisateurService utilisateurService;
+    private final UserService utilisateurService;
     private final PasswordEncoder passwordEncoder;
 
-    public RegisterController(UtilisateurService utilisateurService, PasswordEncoder passwordEncoder) {
+    public RegisterController(UserService utilisateurService, PasswordEncoder passwordEncoder) {
         this.utilisateurService = utilisateurService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -27,13 +27,13 @@ public class RegisterController {
                                @RequestParam String email,
                                @RequestParam String password) {
         String encodedPassword = passwordEncoder.encode(password);
-        Utilisateur utilisateur = new Utilisateur();
+        User utilisateur = new User();
         utilisateur.setUsername(username);
         utilisateur.setEmail(email);
-        utilisateur.setPasswordHash(encodedPassword);
-        utilisateur.setRole("USER");
+        utilisateur.setPassword(encodedPassword);
+        utilisateur.setRole(User.Role.USER); // Fixed setting role
 
-        utilisateurService.save(utilisateur);
+        utilisateurService.saveUser(utilisateur);
         return "redirect:/login";
     }
 }

@@ -38,4 +38,3 @@ public class User {
         USER, ADMIN, MODERATOR, VISITOR
     }
 }
-
