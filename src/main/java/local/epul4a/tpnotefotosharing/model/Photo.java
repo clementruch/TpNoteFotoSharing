@@ -9,11 +9,22 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Photo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String title;
+
+    public enum Visibility{Private,Public};
+    private Visibility visibility;
+    private String description;
+    private String url;
+
+    // Constructors
+    public Photo() {}
+
 
     @Column(nullable = false)
     private String title;

@@ -6,13 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
 @Controller
+@RequestMapping("/photo")
 public class PhotoController {
 
     @Autowired
-    private PhotoRepository photoRepository;
+    private PhotoRepository photoRepository;  // Repository pour gérer les photos
+
 
     @GetMapping("/photos")
     public String index(Model model) {
@@ -29,5 +35,6 @@ public class PhotoController {
         photo.setDescription(description);
         photoRepository.save(photo); // Save the photo to the database
         return "redirect:/photos"; // Redirect back to the photos page
+
     }
 }
