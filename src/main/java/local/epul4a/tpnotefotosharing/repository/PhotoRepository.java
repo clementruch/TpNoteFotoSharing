@@ -9,4 +9,5 @@ public interface PhotoRepository extends JpaRepository<User, Long> {
 
     Photo save(Photo photo);
 
+
 }
