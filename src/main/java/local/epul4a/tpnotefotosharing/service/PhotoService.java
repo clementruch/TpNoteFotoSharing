@@ -1,6 +1,9 @@
 package local.epul4a.tpnotefotosharing.service;
 
+import local.epul4a.tpnotefotosharing.model.Permission;
 import local.epul4a.tpnotefotosharing.model.Photo;
+import local.epul4a.tpnotefotosharing.model.User;
+import local.epul4a.tpnotefotosharing.repository.PermissionRepository;
 import local.epul4a.tpnotefotosharing.repository.PhotoRepository;
 import local.epul4a.tpnotefotosharing.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -21,10 +26,39 @@ public class PhotoService {
     private PhotoRepository photoRepository;
 
     @Autowired
+    private PermissionRepository permissionRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     private static final String UPLOAD_DIR = "/uploads/";
     private static final long MAX_SIZE = 5 * 1024 * 1024;
+
+    // Méthode pour récupérer les photos visibles par un utilisateur
+    public List<Photo> getPhotosForUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Récupérer toutes les photos
+        List<Photo> allPhotos = photoRepository.findAll();
+
+        // Filtrer les photos en fonction des permissions de l'utilisateur
+        List<Photo> visiblePhotos = new ArrayList<>();
+        for (Photo photo : allPhotos) {
+            // Vérifier les permissions de l'utilisateur sur chaque photo
+            Permission permission = permissionRepository.findByPhotoIdAndUserId(photo.getId(), userId).orElse(null);
+            if (permission != null && permission.getPermissionLevel() != Permission.PermissionLevel.VIEW) {
+                // Si l'utilisateur a la permission de voir cette photo, on l'ajoute à la liste
+                visiblePhotos.add(photo);
+            } else if (photo.getVisibility() == Photo.Visibility.PUBLIC) {
+                // Si la photo est publique, elle est visible par tout le monde
+                visiblePhotos.add(photo);
+            }
+        }
+
+        return visiblePhotos;
+    }
+
     public Photo uploadPhoto(MultipartFile file, String title, String description, Long ownerId, String visibility) throws IOException {
         if (!isValidFileType(file)) {
             throw new RuntimeException("Invalid file format. Only JPEG and PNG are allowed.");
