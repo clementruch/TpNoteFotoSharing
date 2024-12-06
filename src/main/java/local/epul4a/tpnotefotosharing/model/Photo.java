@@ -1,9 +1,17 @@
 package local.epul4a.tpnotefotosharing.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class Photo {
-    // Getters and setters
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,38 +25,21 @@ public class Photo {
     // Constructors
     public Photo() {}
 
-    public Photo(String title,Visibility visibility, String description, String url) {
-        this.title = title;
-        this.visibility = visibility;
-        this.description = description;
-        this.url=url;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public Long getId(){return id;}
+    @Column(nullable = false)
+    private String title;
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public String getTitle(){return title;}
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Visibility visibility;
 
-    public Visibility getVisibility() {
-        return visibility;
-    }
+    @Column(length = 500)
+    private String description;
 
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
-    }
+    @Column(nullable = false)
+    private String url;
 
-    public String getDescription() {
-        return description;
+    public enum Visibility {
+        PRIVATE, PUBLIC
     }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    public String getUrl(){return url;}
-    public void setUrl(String url){this.url=url;}
 }
