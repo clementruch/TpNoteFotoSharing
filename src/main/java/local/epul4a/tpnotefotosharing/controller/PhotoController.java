@@ -8,8 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.management.relation.Role;
-
 @Controller
 public class PhotoController {
     @Autowired
@@ -18,10 +16,12 @@ public class PhotoController {
     @GetMapping("/Photo")
     public String index(Model model){
         model.addAttribute("photos",photoRepository.findAll());
+        return null;
     }
     @PostMapping("/addPhoto")
     public String addPhoto(String title,String url,String description){
         Photo photo=new Photo();
         photo.setTitle(title);
+        return title;
     }
 }
