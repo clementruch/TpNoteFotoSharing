@@ -38,9 +38,4 @@ public class UserController {
         }
         return "register";
     }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
 }

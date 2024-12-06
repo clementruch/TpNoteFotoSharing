@@ -13,11 +13,18 @@
 
 <main>
     <div class="container">
+        <!-- Welcome message -->
+        <div class="mt-4 mb-4 text-end">
+            <h5>Bienvenue, <span th:text="${username}"></span>!</h5>
+            <a th:href="@{/logout}" class="btn btn-danger btn-sm">Se Déconnecter</a>
+        </div>
+
+        <!-- Page content -->
         <h2 class="text-center">Dernières photos partagées</h2>
         <div class="row">
             <div class="col-md-4 photo-card">
                 <div class="card">
-                    <img src="https://via.placeholder.com/150" alt="Photo 1" class="photo-thumbnail" />
+                    <img src="https://via.placeholder.com/150" alt="Photo 1" class="photo-thumbnail card-img-top" />
                     <div class="card-body">
                         <h5 class="card-title">Titre de la photo</h5>
                         <p class="card-text">Description de la photo partagée.</p>
@@ -27,7 +34,7 @@
 
             <div class="col-md-4 photo-card">
                 <div class="card">
-                    <img src="https://via.placeholder.com/150" alt="Photo 2" class="photo-thumbnail" />
+                    <img src="https://via.placeholder.com/150" alt="Photo 2" class="photo-thumbnail card-img-top" />
                     <div class="card-body">
                         <h5 class="card-title">Titre de la photo</h5>
                         <p class="card-text">Description de la photo partagée.</p>
@@ -37,17 +44,20 @@
 
             <div class="col-md-4 photo-card">
                 <div class="card">
-                    <img src="https://via.placeholder.com/150" alt="Photo 3" class="photo-thumbnail" />
+                    <img src="https://via.placeholder.com/150" alt="Photo 3" class="photo-thumbnail card-img-top" />
                     <div class="card-body">
                         <h5 class="card-title">Titre de la photo</h5>
                         <p class="card-text">Description de la photo partagée.</p>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </main>
+
+<footer class="text-center mt-5">
+    <p>&copy; 2024 TpNoteFotoSharing. Tous droits réservés.</p>
+</footer>
 
 </body>
 </html>
