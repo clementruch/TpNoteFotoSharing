@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Photo Gallery</title>
+    <style>
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            padding: 20px;
+        }
+        .photo-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .photo-item img {
+            max-width: 100%;
+            height: auto;
+        }
+        .photo-item h3 {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+        .photo-item p {
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Photo Gallery</h1>
+
+<div class="photo-gallery">
+    <div th:each="photo : ${photos}" class="photo-item">
+        <img th:src="@{${photo.url}}" alt="Photo" />
+        <h3 th:text="${photo.title}">Title</h3>
+        <p th:text="${photo.description}">Description</p>
+    </div>
+</div>
+
+</body>
+</html>
