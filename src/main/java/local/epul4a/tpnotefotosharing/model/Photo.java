@@ -1,7 +1,6 @@
 package local.epul4a.tpnotefotosharing.model;
 
 import jakarta.persistence.*;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -16,17 +15,6 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-
-    public enum Visibility{Private,Public};
-    private Visibility visibility;
-    private String description;
-    private String url;
-
-    // Constructors
-    public Photo() {}
-
-
     @Column(nullable = false)
     private String title;
 
@@ -40,6 +28,7 @@ public class Photo {
     @Column(nullable = false)
     private String url;
 
+    // Enum for visibility
     public enum Visibility {
         PRIVATE, PUBLIC
     }
