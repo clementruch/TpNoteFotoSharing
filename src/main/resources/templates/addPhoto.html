@@ -47,12 +47,12 @@
 
 <h1>Ajouter une Photo</h1>
 
-<form th:action="@{/photo/addPhoto}" th:object="${photo}" method="post" enctype="multipart/form-data">
+<form th:action="@{/photo/photos/add}" method="post" enctype="multipart/form-data">
     <label for="title">Titre de la photo:</label>
-    <input type="text" id="title" name="title" th:field="*{title}" required><br>
+    <input type="text" id="title" name="title" required><br>
 
     <label for="description">Description:</label>
-    <textarea id="description" name="description" th:field="*{description}" required></textarea><br>
+    <textarea id="description" name="description" required></textarea><br>
 
     <label for="file">Télécharger la photo:</label>
     <input type="file" id="file" name="file" accept="image/*" required><br>

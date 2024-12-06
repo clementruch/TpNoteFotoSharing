@@ -31,7 +31,7 @@ public class PhotoService {
     @Autowired
     private UserRepository userRepository;
 
-    private static final String UPLOAD_DIR = "/uploads/";
+    private static final String UPLOAD_DIR = "uploads/";
     private static final long MAX_SIZE = 5 * 1024 * 1024;
 
     // Méthode pour récupérer les photos visibles par un utilisateur
@@ -71,6 +71,9 @@ public class PhotoService {
         // Sauvegarder le fichier sur le serveur
         String filePath = saveFile(file);
 
+        // Récupérer l'utilisateur (propriétaire de la photo) à partir de son ID
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Créer un objet Photo et l'enregistrer dans la base de données
         Photo photo = new Photo();
@@ -78,6 +81,7 @@ public class PhotoService {
         photo.setDescription(description);
         photo.setUrl(filePath);
         photo.setVisibility(Photo.Visibility.valueOf(visibility));
+        photo.setOwner(owner);
 
         return photoRepository.save(photo);
     }
@@ -103,7 +107,8 @@ public class PhotoService {
         Path filePath = path.resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return filePath.toString();  // Retourne le chemin du fichier
+        return filePath.toString().replace("\\", "/");  // Remplacer les barres obliques inversées par des barres obliques
+//        return filePath.toString().replace("uploads/", "/uploads/");  // Retourne le chemin du fichier
     }
 
 }
