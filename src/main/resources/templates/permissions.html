@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Permissions</title>
+</head>
+<body>
+
+<h1>Permissions de la photo</h1>
+
+<div th:each="permission : ${permissions}">
+    <p>
+        Utilisateur : <span th:text="${permission.user.username}"></span><br>
+        Permission : <span th:text="${permission.permissionLevel}"></span><br>
+    </p>
+</div>
+
+<div th:if="${#authentication.principal.authorities.contains('ROLE_ADMIN') or #authentication.principal.authorities.contains('ROLE_MODERATOR')}">
+    <h3>Ajouter une permission</h3>
+    <form th:action="@{/permissions/grant}" method="post">
+        <label for="userId">Utilisateur ID:</label>
+        <input type="text" id="userId" name="userId" required><br>
+
+        <label for="permissionLevel">Permission:</label>
+        <select id="permissionLevel" name="permissionLevel">
+            <option value="VIEW">Voir</option>
+            <option value="EDIT">Modifier</option>
+            <option value="ADMIN">Administrateur</option>
+        </select><br>
+
+        <button type="submit">Attribuer Permission</button>
+    </form>
+
+    <h3>Révoquer une permission</h3>
+    <form th:action="@{/permissions/revoke}" method="post">
+        <label for="userId">Utilisateur ID:</label>
+        <input type="text" id="userId" name="userId" required><br>
+
+        <button type="submit">Révoquer Permission</button>
+    </form>
+</div>
+
+<div th:if="${not #authentication.principal.authorities.contains('ROLE_ADMIN') and not #authentication.principal.authorities.contains('ROLE_MODERATOR')}" class="alert alert-danger">
+    <p>Vous n'avez pas les droits nécessaires pour gérer les permissions.</p>
+</div>
+
+</body>
+</html>

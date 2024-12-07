@@ -5,10 +5,20 @@
     <title>Error</title>
 </head>
 <body>
-<h1>Something went wrong</h1>
-<p th:text="'Status: ' + ${status}"></p>
-<p th:text="'Error: ' + ${error}"></p>
-<p th:text="'Message: ' + ${message}"></p>
-<p th:if="${path}" th:text="'Path: ' + ${path}"></p>
+<div class="error-container">
+    <h1>Error Occurred</h1>
+    <p>We're sorry, but something went wrong.</p>
+    <p>Our team has been notified. Please try again later or contact support if the issue persists.</p>
+
+    <div class="debug-info" th:if="${error}">
+        <p><strong>Details:</strong></p>
+        <p><strong>Status Code:</strong> <span th:text="${error['status']}"></span></p>
+        <p><strong>Message:</strong> <span th:text="${error['message']}"></span></p>
+        <p><strong>Exception:</strong> <span th:text="${error['exception']}"></span></p>
+        <p><strong>Path:</strong> <span th:text="${error['path']}"></span></p>
+    </div>
+
+    <a class="home-link" th:href="@{/}">Go back to Home</a>
+</div>
 </body>
 </html>

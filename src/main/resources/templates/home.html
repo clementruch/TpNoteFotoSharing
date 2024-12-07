@@ -13,44 +13,31 @@
 
 <main>
     <div class="container">
-        <!-- Welcome message -->
         <div class="mt-4 mb-4 text-end">
             <h5>Bienvenue, <span th:text="${username}"></span>!</h5>
             <a th:href="@{/logout}" class="btn btn-danger btn-sm">Se Déconnecter</a>
         </div>
 
-        <!-- Page content -->
         <h2 class="text-center">Dernières photos partagées</h2>
+
+        <div th:if="${#lists.isEmpty(photos)}" class="alert alert-info">
+            <p>Aucune photo à afficher pour le moment.</p>
+        </div>
+
         <div class="row">
-            <div class="col-md-4 photo-card">
+            <div th:each="photo : ${photos}" class="col-md-4 photo-card">
                 <div class="card">
-                    <img src="https://via.placeholder.com/150" alt="Photo 1" class="photo-thumbnail card-img-top" />
+                    <img th:src="@{${photo.url}}" alt="Photo" class="photo-thumbnail card-img-top" />
                     <div class="card-body">
-                        <h5 class="card-title">Titre de la photo</h5>
-                        <p class="card-text">Description de la photo partagée.</p>
+                        <h5 class="card-title" th:text="${photo.title}">Titre de la photo</h5>
+                        <p class="card-text" th:text="${photo.description}">Description de la photo partagée.</p>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-4 photo-card">
-                <div class="card">
-                    <img src="https://via.placeholder.com/150" alt="Photo 2" class="photo-thumbnail card-img-top" />
-                    <div class="card-body">
-                        <h5 class="card-title">Titre de la photo</h5>
-                        <p class="card-text">Description de la photo partagée.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 photo-card">
-                <div class="card">
-                    <img src="https://via.placeholder.com/150" alt="Photo 3" class="photo-thumbnail card-img-top" />
-                    <div class="card-body">
-                        <h5 class="card-title">Titre de la photo</h5>
-                        <p class="card-text">Description de la photo partagée.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="text-center mt-4">
+            <a th:href="@{/photo/photos/add}" class="btn btn-primary">Télécharger une nouvelle photo</a>
         </div>
     </div>
 </main>

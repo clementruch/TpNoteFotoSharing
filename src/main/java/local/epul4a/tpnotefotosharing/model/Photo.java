@@ -28,6 +28,10 @@ public class Photo {
     @Column(nullable = false)
     private String url;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
+
     // Enum for visibility
     public enum Visibility {
         PRIVATE, PUBLIC
