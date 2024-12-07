@@ -46,9 +46,9 @@ public class PhotoController {
 
     // Méthode pour ajouter une nouvelle photo après soumission du formulaire
     @PostMapping("/photos/add")
-    public String addPhoto(@ModelAttribute Photo photo, @RequestParam("file") MultipartFile file) throws IOException {
+    public String addPhoto(@ModelAttribute Photo photo, @RequestParam("file") MultipartFile file, @RequestParam("visibility") String visibility) throws IOException {
         Long userId = getCurrentUserId();  // Récupérer l'ID de l'utilisateur connecté
-        photoService.uploadPhoto(file, photo.getTitle(), photo.getDescription(), userId, "PUBLIC");  // Utilisation de l'ID de l'utilisateur connecté
+        photoService.uploadPhoto(file, photo.getTitle(), photo.getDescription(), userId, visibility);  // Utilisation de l'ID de l'utilisateur connecté
         return "redirect:/photo/Photo";  // Rediriger vers la page d'affichage des photos
     }
 

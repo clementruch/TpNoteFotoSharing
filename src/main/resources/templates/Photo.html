@@ -36,9 +36,9 @@
 <div class="photo-gallery">
     <div th:each="photo : ${photos}" class="photo-item">
         <img th:src="@{'/' + ${photo.url}}" alt="Photo" />
-        <h3 th:text="${photo.url}">url</h3>
         <h3 th:text="${photo.title}">Title</h3>
         <p th:text="${photo.description}">Description</p>
+        <p th:text="${photo.visibility}">Visibilité</p>
     </div>
 </div>
 
