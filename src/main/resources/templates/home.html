@@ -3,48 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page d'Accueil</title>
+    <title>Accueil - FotoSharing</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+    <div th:replace="~{layout/header.html}"></div>
 
-<div th:replace="~{header.html}"></div>
+    <main class="flex-grow-1">
+        <div class="container mt-4">
+            <div class="text-end">
+                <h5>Bienvenue, <span th:text="${username}"></span>!</h5>
+                <a th:href="@{/logout}" class="btn btn-danger btn-sm">Se Déconnecter</a>
+            </div>
 
-<main>
-    <div class="container">
-        <div class="mt-4 mb-4 text-end">
-            <h5>Bienvenue, <span th:text="${username}"></span>!</h5>
-            <a th:href="@{/logout}" class="btn btn-danger btn-sm">Se Déconnecter</a>
-        </div>
+            <h2 class="text-center mt-4">Dernières photos partagées</h2>
 
-        <h2 class="text-center">Dernières photos partagées</h2>
+            <!-- No Photos Message -->
+            <div th:if="${#lists.isEmpty(photos)}" class="alert alert-info text-center mt-4">
+                <p>Aucune photo à afficher pour le moment.</p>
+            </div>
 
-        <div th:if="${#lists.isEmpty(photos)}" class="alert alert-info">
-            <p>Aucune photo à afficher pour le moment.</p>
-        </div>
-
-        <div class="row">
-            <div th:each="photo : ${photos}" class="col-md-4 photo-card">
-                <div class="card">
-                    <img th:src="@{${photo.url}}" alt="Photo" class="photo-thumbnail card-img-top" />
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${photo.title}">Titre de la photo</h5>
-                        <p class="card-text" th:text="${photo.description}">Description de la photo partagée.</p>
+            <!-- Photo Cards -->
+            <div class="row mt-4" th:if="${!#lists.isEmpty(photos)}">
+                <div th:each="photo : ${photos}" class="col-md-4 photo-card">
+                    <div class="card">
+                        <img th:src="@{${photo.url}}" alt="Photo" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${photo.title}">Titre de la photo</h5>
+                            <p class="card-text" th:text="${photo.description}">Description</p>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Add Photo Button -->
+            <div class="text-center mt-4">
+                <a th:href="@{/photo/photos/add}" class="btn btn-primary">Télécharger une nouvelle photo</a>
+            </div>
         </div>
+    </main>
 
-        <div class="text-center mt-4">
-            <a th:href="@{/photo/photos/add}" class="btn btn-primary">Télécharger une nouvelle photo</a>
-        </div>
-    </div>
-</main>
-
-<footer class="text-center mt-5">
-    <p>&copy; 2024 TpNoteFotoSharing. Tous droits réservés.</p>
-</footer>
-
+    <div th:replace="~{layout/footer.html}"></div>
 </body>
 </html>

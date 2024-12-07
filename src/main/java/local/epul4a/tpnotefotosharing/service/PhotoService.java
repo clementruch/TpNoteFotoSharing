@@ -42,16 +42,18 @@ public class PhotoService {
 
         // Récupérer toutes les photos
         List<Photo> allPhotos = photoRepository.findAll();
-
         // Filtrer les photos visibles par l'utilisateur
         List<Photo> visiblePhotos = new ArrayList<>();
+
         for (Photo photo : allPhotos) {
             // Si l'utilisateur est propriétaire de la photo
             if (photo.getOwner().getId().equals(userId)) {
+                photo.getOwner().getUsername();
                 visiblePhotos.add(photo);
             }
             // Si la photo est publique
             else if (photo.getVisibility() == Photo.Visibility.PUBLIC) {
+                photo.getOwner().getUsername();
                 visiblePhotos.add(photo);
             }
             // Si l'utilisateur a une permission sur cette photo
@@ -59,6 +61,7 @@ public class PhotoService {
                 Permission permission = permissionRepository.findByPhotoIdAndUserId(photo.getId(), userId).orElse(null);
                 if (permission != null && (permission.getPermissionLevel() == Permission.PermissionLevel.VIEW ||
                         permission.getPermissionLevel() == Permission.PermissionLevel.EDIT)) {
+                    photo.getOwner().getUsername();
                     visiblePhotos.add(photo);
                 }
             }
