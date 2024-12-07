@@ -39,6 +39,7 @@
         <h3 th:text="${photo.title}">Title</h3>
         <p th:text="${photo.description}">Description</p>
         <p th:text="${photo.visibility}">Visibilité</p>
+        <p><strong>Propriétaire :</strong> <span th:text="${photo.owner.username}">Owner</span></p>
     </div>
 </div>
 
