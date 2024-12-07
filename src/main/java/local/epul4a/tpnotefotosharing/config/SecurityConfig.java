@@ -15,6 +15,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        // Restreindre l'accès aux administrateurs pour les routes admin
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
 

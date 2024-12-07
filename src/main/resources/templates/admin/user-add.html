@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Utilisateur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+<!-- Inclusion du header -->
+<div th:replace="~{layout/header.html}"></div>
+
+<main class="flex-grow-1">
+    <div class="container mt-5">
+        <h1 class="text-center">Ajouter un Utilisateur</h1>
+        <form th:action="@{/admin/users/add}" th:object="${user}" method="post" class="mx-auto mt-4 p-4 border rounded bg-light" style="max-width: 500px;">
+            <div class="mb-3">
+                <label for="username" class="form-label">Nom d'utilisateur</label>
+                <input type="text" id="username" name="username" th:field="*{username}" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" th:field="*{email}" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" id="password" name="password" th:field="*{password}" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">Rôle</label>
+                <select id="role" name="role" th:field="*{role}" class="form-select" required>
+                    <option value="USER">User</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="MODERATOR">Moderator</option>
+                    <option value="VISITOR">Visitor</option>
+                </select>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Ajouter l'Utilisateur</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- Inclusion du footer -->
+<div th:replace="~{layout/footer.html}"></div>
+</body>
+</html>

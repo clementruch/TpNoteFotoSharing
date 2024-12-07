@@ -1,0 +1,47 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" th:href="@{/}">FotoSharing</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <!-- Lien vers les photos -->
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/photo/Photo}">Galerie Photos</a>
+        </li>
+        <!-- Lien vers l'ajout de photo -->
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/photo/photos/add}">Ajouter une Photo</a>
+        </li>
+        <!-- Lien vers la gestion des utilisateurs (visible uniquement pour les admins) -->
+        <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+          <a class="nav-link" th:href="@{/admin/users}">Gérer les Utilisateurs</a>
+        </li>
+        <!-- Lien vers les permissions -->
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/permissions/list/{photoId}(photoId=1)}">Gestion des Permissions</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto">
+        <!-- Affichage dynamique du nom de l'utilisateur connecté -->
+        <li class="nav-item">
+                    <span class="navbar-text" th:if="${#authentication.name != 'anonymousUser'}">
+                        Connecté en tant que : <strong th:text="${#authentication.name}">Utilisateur</strong>
+                    </span>
+        </li>
+        <!-- Lien déconnexion -->
+        <li class="nav-item" th:if="${#authentication.name != 'anonymousUser'}">
+          <a class="nav-link btn btn-danger text-white" th:href="@{/logout}">Se Déconnecter</a>
+        </li>
+        <!-- Lien connexion/inscription -->
+        <li class="nav-item" th:if="${#authentication.name == 'anonymousUser'}">
+          <a class="nav-link" th:href="@{/login}">Se Connecter</a>
+        </li>
+        <li class="nav-item" th:if="${#authentication.name == 'anonymousUser'}">
+          <a class="nav-link" th:href="@{/users/register}">S'inscrire</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
