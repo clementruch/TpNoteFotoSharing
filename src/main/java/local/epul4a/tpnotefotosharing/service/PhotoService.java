@@ -107,8 +107,8 @@ public class PhotoService {
         Path filePath = path.resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return filePath.toString().replace("\\", "/");  // Remplacer les barres obliques inversées par des barres obliques
-//        return filePath.toString().replace("uploads/", "/uploads/");  // Retourne le chemin du fichier
+        //return filePath.toString().replace("\\", "/");  // Remplacer les barres obliques inversées par des barres obliques
+        return filePath.toString().replace("uploads\\", "");  // Retourne le chemin du fichier
     }
 
 }
