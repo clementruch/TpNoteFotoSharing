@@ -18,25 +18,27 @@
 <div th:if="${#authentication.principal.authorities.contains('ROLE_ADMIN') or #authentication.principal.authorities.contains('ROLE_MODERATOR')}">
     <h3>Ajouter une permission</h3>
     <form th:action="@{/permissions/grant}" method="post">
-        <label for="userId">Utilisateur ID:</label>
-        <input type="text" id="userId" name="userId" required><br>
+        <label for="contactId">Sélectionner un contact :</label>
+        <select id="contactId" name="userId" class="form-select" required>
+            <option th:each="contact : ${contacts}" th:value="${contact.contact.id}" th:text="${contact.contact.username}"></option>
+        </select><br>
 
-        <label for="permissionLevel">Permission:</label>
-        <select id="permissionLevel" name="permissionLevel">
+        <label for="permissionLevel">Permission :</label>
+        <select id="permissionLevel" name="permissionLevel" class="form-select">
             <option value="VIEW">Voir</option>
             <option value="EDIT">Modifier</option>
             <option value="ADMIN">Administrateur</option>
         </select><br>
 
-        <button type="submit">Attribuer Permission</button>
+        <button type="submit" class="btn btn-primary mt-2">Attribuer Permission</button>
     </form>
 
     <h3>Révoquer une permission</h3>
     <form th:action="@{/permissions/revoke}" method="post">
-        <label for="userId">Utilisateur ID:</label>
+        <label for="userId">Utilisateur ID :</label>
         <input type="text" id="userId" name="userId" required><br>
 
-        <button type="submit">Révoquer Permission</button>
+        <button type="submit" class="btn btn-danger mt-2">Révoquer Permission</button>
     </form>
 </div>
 

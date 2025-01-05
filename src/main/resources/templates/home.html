@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil - FotoSharing</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100">
     <div th:replace="~{layout/header.html}"></div>
@@ -19,12 +18,10 @@
 
             <h2 class="text-center mt-4">Dernières photos partagées</h2>
 
-            <!-- No Photos Message -->
             <div th:if="${#lists.isEmpty(photos)}" class="alert alert-info text-center mt-4">
                 <p>Aucune photo à afficher pour le moment.</p>
             </div>
 
-            <!-- Photo Cards -->
             <div class="row mt-4" th:if="${!#lists.isEmpty(photos)}">
                 <div th:each="photo : ${photos}" class="col-md-4 photo-card">
                     <div class="card">
@@ -37,7 +34,6 @@
                 </div>
             </div>
 
-            <!-- Add Photo Button -->
             <div class="text-center mt-4">
                 <a th:href="@{/photo/photos/add}" class="btn btn-primary">Télécharger une nouvelle photo</a>
             </div>

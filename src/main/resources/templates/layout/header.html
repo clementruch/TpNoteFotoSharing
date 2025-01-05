@@ -1,3 +1,7 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="/js/pendingRequests.js"></script>
+<link href="/static/css/style.css" rel="stylesheet">
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
     <a class="navbar-brand" th:href="@{/}">FotoSharing</a>
@@ -16,11 +20,15 @@
         </li>
         <!-- Lien vers la gestion des utilisateurs (visible uniquement pour les admins) -->
         <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-          <a class="nav-link" th:href="@{/admin/users}">Gérer les Utilisateurs</a>
+          <a class="nav-link" th:href="@{/admin/users}">Utilisateurs</a>
         </li>
         <!-- Lien vers les permissions -->
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/permissions/list/{photoId}(photoId=1)}">Gestion des Permissions</a>
+          <a class="nav-link" th:href="@{/permissions/list/{photoId}(photoId=1)}">Permissions</a>
+        </li>
+        <!-- Lien vers la gestion des contacts -->
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/contacts}">Contacts</a>
         </li>
       </ul>
       <ul class="navbar-nav ms-auto">
