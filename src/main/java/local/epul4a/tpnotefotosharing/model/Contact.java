@@ -1,9 +1,7 @@
 package local.epul4a.tpnotefotosharing.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -18,9 +16,14 @@ public class Contact {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // L'utilisateur qui ajoute un contact
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @ManyToOne
     @JoinColumn(name = "contact_id", nullable = false)

@@ -29,7 +29,9 @@ public class ContactController {
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
 
-        List<Contact> contacts = contactService.getContactsForUser(user.getId());
+        Long userId = user.getId();
+
+        List<Contact> contacts = contactService.getContactsForUser(userId);
         long pendingRequestsCount = contactService.countPendingRequests(user.getId());
 
         model.addAttribute("contacts", contacts);

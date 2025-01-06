@@ -1,5 +1,6 @@
 package local.epul4a.tpnotefotosharing.controller;
 
+import local.epul4a.tpnotefotosharing.model.Contact;
 import local.epul4a.tpnotefotosharing.model.Permission;
 import local.epul4a.tpnotefotosharing.service.ContactService;
 import local.epul4a.tpnotefotosharing.service.PermissionService;
@@ -132,12 +133,45 @@ public class PhotoController {
         return "redirect:/photo/Photo";
     }
 
+    @GetMapping("/update/{photoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or @photoService.isOwner(authentication.name, #photoId)")
+    public String showUpdateForm(@PathVariable Long photoId, Model model) {
+        Photo photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo not found"));
+
+        Long userId = getCurrentUserId();
+        List<Contact> contacts = contactService.getContactsForUser(userId); // Les contacts disponibles
+        List<User> sharedWith = permissionService.getUsersWithAccessToPhoto(photoId); // Les utilisateurs ayant accès à la photo
+
+        model.addAttribute("photo", photo);
+        model.addAttribute("contacts", contacts);
+        model.addAttribute("sharedWith", sharedWith);
+        return "updatePhotoForm";
+    }
+
+
+
+
     @PostMapping("/update/{photoId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or @photoService.isOwner(authentication.name, #photoId)")
     public String updatePhoto(@PathVariable Long photoId,
                               @RequestParam String title,
-                              @RequestParam String description) {
-        photoService.updatePhoto(photoId, title, description);
+                              @RequestParam String description,
+                              @RequestParam String visibility,
+                              @RequestParam(value = "contacts", required = false) List<Long> contactIds) {
+        photoService.updatePhoto(photoId, title, description, visibility);
+
+        // Mettre à jour les permissions si la visibilité est privée
+        if ("PRIVATE".equals(visibility)) {
+            permissionService.updatePermissionsForPhoto(photoId, contactIds);
+        } else {
+            // Supprimer les permissions si la visibilité passe à "PUBLIC"
+            permissionService.removePermissionsForPhoto(photoId);
+        }
+
         return "redirect:/photo/Photo";
     }
+
+
+
 }

@@ -32,6 +32,10 @@ public class Photo {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    public Photo(Long id) {
+        this.id = id;
+    }
+
     // Enum for visibility
     public enum Visibility {
         PRIVATE, PUBLIC

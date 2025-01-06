@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name="partage")
 public class Permission {
 
@@ -18,6 +19,10 @@ public class Permission {
     @ManyToOne
     @JoinColumn(name = "photo_id", nullable = false)
     private Photo photo;
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -138,11 +138,12 @@ public class PhotoService {
         photoRepository.delete(photo);
     }
 
-    public void updatePhoto(Long photoId, String title, String description) {
+    public void updatePhoto(Long photoId, String title, String description, String visibility) {
         Photo photo = photoRepository.findById(photoId)
                 .orElseThrow(() -> new RuntimeException("Photo not found"));
         photo.setTitle(title);
         photo.setDescription(description);
+        photo.setVisibility(Photo.Visibility.valueOf(visibility));
         photoRepository.save(photo);
     }
 }
