@@ -76,7 +76,9 @@ CREATE TABLE IF NOT EXISTS contact (
                                        user_id BIGINT NOT NULL,
                                        contact_id BIGINT NOT NULL,
                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                       FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+                                       selected TINYINT(1) DEFAULT 0, -- Added the selected column with a default value
+    status ENUM('ACCEPTED', 'DECLINED', 'PENDING') DEFAULT 'PENDING', -- Added the status column
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (contact_id) REFERENCES user(id) ON DELETE CASCADE,
     UNIQUE (user_id, contact_id) -- Évite les doublons
     );
