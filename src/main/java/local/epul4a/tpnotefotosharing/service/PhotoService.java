@@ -40,33 +40,32 @@ public class PhotoService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Récupérer toutes les photos si l'utilisateur est un ADMIN
         if (user.getRole() == User.Role.ADMIN) {
+            // Si l'utilisateur est un admin, retourner toutes les photos
             return photoRepository.findAll();
         }
 
-        // Récupérer toutes les photos visibles pour un utilisateur non-admin
+        // Logique pour les utilisateurs normaux
         List<Photo> allPhotos = photoRepository.findAll();
         List<Photo> visiblePhotos = new ArrayList<>();
 
         for (Photo photo : allPhotos) {
+            if (photo.getOwner() == null || photo.getUrl() == null) {
+                continue; // Ignorer les photos avec des informations manquantes
+            }
             if (photo.getOwner().getId().equals(userId)) {
-                // Si l'utilisateur est le propriétaire de la photo
-                visiblePhotos.add(photo);
+                visiblePhotos.add(photo); // Ajouter les photos de l'utilisateur lui-même
             } else if (photo.getVisibility() == Photo.Visibility.PUBLIC) {
-                // Si la photo est publique
-                visiblePhotos.add(photo);
+                visiblePhotos.add(photo); // Ajouter les photos publiques
             } else {
-                // Vérifiez si l'utilisateur a une permission sur cette photo
                 Permission permission = permissionRepository.findByPhotoIdAndUserId(photo.getId(), userId).orElse(null);
                 if (permission != null) {
-                    visiblePhotos.add(photo);
+                    visiblePhotos.add(photo); // Ajouter les photos accessibles par permissions
                 }
             }
         }
         return visiblePhotos;
     }
-
 
     public Photo uploadPhoto(MultipartFile file, String title, String description, Long ownerId, String visibility) throws IOException {
         if (!isValidFileType(file)) {
@@ -119,4 +118,31 @@ public class PhotoService {
         return filePath.toString().replace("uploads" + File.separator, "");
     }
 
+    public boolean isOwner(String username, Long photoId) {
+        Photo photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo not found"));
+
+        boolean isOwner = photo.getOwner().getUsername().equals(username);
+
+        System.out.println("DEBUG - isOwner: username=" + username +
+                ", photoId=" + photoId +
+                ", owner=" + photo.getOwner().getUsername() +
+                ", result=" + isOwner);
+
+        return isOwner;
+    }
+
+    public void deletePhoto(Long photoId) {
+        Photo photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo not found"));
+        photoRepository.delete(photo);
+    }
+
+    public void updatePhoto(Long photoId, String title, String description) {
+        Photo photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo not found"));
+        photo.setTitle(title);
+        photo.setDescription(description);
+        photoRepository.save(photo);
+    }
 }
