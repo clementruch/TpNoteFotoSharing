@@ -34,6 +34,10 @@ public class User {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    public User(Long id) {
+        this.id = id;
+    }
+
     public enum Role {
         USER, ADMIN, MODERATOR, VISITOR
     }

@@ -34,6 +34,10 @@ public class Photo {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    public Photo(Long id) {
+        this.id = id;
+    }
+
     @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Commentaire> comments;
 

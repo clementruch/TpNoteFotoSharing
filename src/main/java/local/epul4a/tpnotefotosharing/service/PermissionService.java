@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PermissionService {
@@ -65,5 +66,32 @@ public class PermissionService {
         Permission permission = permissionRepository.findByPhotoIdAndUserId(photoId, userId)
                 .orElseThrow(() -> new RuntimeException("Permission not found"));
         permissionRepository.delete(permission);
+    }
+
+    public List<User> getUsersWithAccessToPhoto(Long photoId) {
+        return permissionRepository.findByPhotoId(photoId)
+                .stream()
+                .map(Permission::getUser)
+                .collect(Collectors.toList());
+    }
+
+    public void updatePermissionsForPhoto(Long photoId, List<Long> contactIds) {
+        // Supprime les anciennes permissions
+        permissionRepository.deleteByPhotoId(photoId);
+
+        // Ajoute les nouvelles permissions
+        if (contactIds != null) {
+            contactIds.forEach(contactId -> {
+                Permission permission = new Permission();
+                permission.setPhoto(new Photo(photoId));
+                permission.setUser(new User(contactId));
+                permission.setPermissionLevel(Permission.PermissionLevel.VIEW);
+                permissionRepository.save(permission);
+            });
+        }
+    }
+
+    public void removePermissionsForPhoto(Long photoId) {
+        permissionRepository.deleteByPhotoId(photoId);
     }
 }

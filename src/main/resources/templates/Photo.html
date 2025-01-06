@@ -46,23 +46,41 @@
 
 <main class="flex-grow-1 container my-4">
     <h1 class="text-center mb-4">Galerie de Photos</h1>
-    <div class="row g-3 photo-gallery">
-        <div th:each="photo : ${photos}" class="col-md-4">
+    <!-- Afficher un message si aucune photo n'est visible -->
+    <div th:if="${#lists.isEmpty(photosWithPermissions)}" class="alert alert-info text-center mt-4">
+        <p>Aucune photo visible pour le moment.</p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(photosWithPermissions)}" class="row g-3 photo-gallery">
+        <div th:each="photoData : ${photosWithPermissions}" class="col-md-4">
             <a th:href="@{/photo/{id}(id=${photo.id})}" class="card-link">
                 <div class="card">
-                    <img th:src="@{'/' + ${photo.url}}" alt="Photo" class="card-img-top" />
+                    <img
+                            th:src="@{'/' + ${photoData.photo.url}}"
+                            alt="Photo"
+                            class="card-img-top"
+                            onclick="openModal(this)"
+                            style="cursor: pointer;"/>
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${photo.title}">Titre</h5>
-                        <p class="card-text" th:text="${photo.description}">Description</p>
+                        <h5 class="card-title" th:text="${photoData.photo.title ?: 'Sans titre'}"></h5>
+                        <p class="card-text"
+                           th:text="${photoData.photo.description ?: 'Pas de description disponible'}"></p>
                         <p class="card-text">
-                            <strong>ID :</strong> <span th:text="${photo.id}">ID</span>
+                            <strong>Visibilité :</strong>
+                            <span th:text="${photoData.photo.visibility ?: 'Inconnue'}"></span>
                         </p>
                         <p class="card-text">
-                            <strong>Visibilité :</strong> <span th:text="${photo.visibility}">Public/Privé</span>
+                            <strong>Propriétaire :</strong>
+                            <span th:text="${photoData.photo.owner?.username ?: 'Inconnu'}"></span>
                         </p>
-                        <p class="card-text">
-                            <strong>Propriétaire :</strong> <span th:text="${photo.owner.username}">Nom propriétaire</span>
-                        </p>
+                        <!-- Actions conditionnées par les permissions -->
+                        <div th:if="${photoData.canModify}" class="d-flex justify-content-between">
+                            <a th:href="@{/photo/update/{photoId}(photoId=${photoData.photo.id})}"
+                               class="btn btn-warning btn-sm">Modifier</a>
+                            <form th:action="@{/photo/delete/{photoId}(photoId=${photoData.photo.id})}" method="post">
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </a>
