@@ -36,6 +36,21 @@ public class PermissionService {
         return permissionRepository.save(permission);
     }
 
+    public void grantPermissionsForContacts(Long photoId, List<Long> contactIds, Permission.PermissionLevel permissionLevel) {
+        for (Long contactId : contactIds) {
+            Photo photo = photoRepository.findById(photoId)
+                    .orElseThrow(() -> new RuntimeException("Photo not found"));
+            User contact = userRepository.findById(contactId)
+                    .orElseThrow(() -> new RuntimeException("Contact not found"));
+
+            Permission permission = new Permission();
+            permission.setPhoto(photo);
+            permission.setUser(contact);
+            permission.setPermissionLevel(permissionLevel);
+            permissionRepository.save(permission);
+        }
+    }
+
     public Permission getPermission(Long photoId, Long userId) {
         return permissionRepository.findByPhotoIdAndUserId(photoId, userId)
                 .orElseThrow(() -> new RuntimeException("Permission not found"));
