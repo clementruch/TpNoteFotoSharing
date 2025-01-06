@@ -75,6 +75,7 @@ public class ContactService {
                 reciprocalContact.setContact(contact.getUser()); // L'utilisateur qui a envoyé la demande
                 reciprocalContact.setStatus(Contact.ContactStatus.ACCEPTED);
                 reciprocalContact.setCreatedAt(LocalDateTime.now());
+                reciprocalContact.setSelected(false);
 
                 contactRepository.save(reciprocalContact);
             }

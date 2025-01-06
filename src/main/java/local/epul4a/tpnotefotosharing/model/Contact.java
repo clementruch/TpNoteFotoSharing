@@ -36,5 +36,8 @@ public class Contact {
     }
 
     @Column(nullable = false)
+    private boolean selected = false;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now(); // Date d'ajout
 }

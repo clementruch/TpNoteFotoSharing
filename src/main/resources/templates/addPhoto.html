@@ -24,10 +24,18 @@
                 </div>
                 <div class="mb-3">
                     <label for="visibility" class="form-label">Visibilité :</label>
-                    <select id="visibility" name="visibility" class="form-select" required>
+                    <select id="visibility" name="visibility" class="form-select" onchange="toggleContactsSelection()" required>
                         <option value="PUBLIC">Public</option>
                         <option value="PRIVATE">Privé</option>
                     </select>
+                </div>
+                <!-- Section pour sélectionner les contacts -->
+                <div id="contactsSelection" class="mb-3" style="display: none;">
+                    <label for="contacts" class="form-label">Partager avec :</label>
+                    <select id="contacts" name="contacts" class="form-select" multiple>
+                        <option th:each="contact : ${contacts}" th:value="${contact.contact.id}" th:text="${contact.contact.username}"></option>
+                    </select>
+                    <small class="form-text text-muted">Maintenez la touche Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs utilisateurs.</small>
                 </div>
                 <div class="mb-3">
                     <label for="file" class="form-label">Télécharger la photo :</label>
@@ -37,6 +45,14 @@
                     <button type="submit" class="btn btn-success">Ajouter la Photo</button>
                 </div>
             </form>
+
+            <script>
+                function toggleContactsSelection() {
+                    const visibility = document.getElementById('visibility').value;
+                    const contactsSection = document.getElementById('contactsSelection');
+                    contactsSection.style.display = visibility === 'PRIVATE' ? 'block' : 'none';
+                }
+            </script>
         </div>
     </main>
 

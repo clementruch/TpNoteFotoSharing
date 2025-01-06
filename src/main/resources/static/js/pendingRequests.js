@@ -10,10 +10,10 @@ function updatePendingRequestsCount() {
         .then(count => {
             const badge = document.getElementById('pendingRequestsBadge');
             if (count > 0) {
-                badge.textContent = count; // Mettre à jour le texte avec le nombre de demandes
-                badge.style.display = 'inline'; // Afficher le badge si des demandes existent
+                badge.textContent = count;
+                badge.style.display = 'inline';
             } else {
-                badge.style.display = 'none'; // Cacher le badge si aucune demande
+                badge.style.display = 'none';
             }
         })
         .catch(error => {
@@ -23,11 +23,9 @@ function updatePendingRequestsCount() {
 
 // Fonction pour initialiser les événements et mettre à jour le compteur
 function initializePendingRequestsUpdater() {
-    // Mettre à jour immédiatement lors du chargement de la page
     updatePendingRequestsCount();
 
-    // Mettre à jour toutes les 10 secondes
-    setInterval(updatePendingRequestsCount, 10000);
+    setInterval(updatePendingRequestsCount, 1000);
 }
 
 // Initialiser la mise à jour du compteur au chargement de la page

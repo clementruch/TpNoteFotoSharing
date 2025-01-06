@@ -40,35 +40,33 @@ public class PhotoService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Récupérer toutes les photos
+        // Récupérer toutes les photos si l'utilisateur est un ADMIN
+        if (user.getRole() == User.Role.ADMIN) {
+            return photoRepository.findAll();
+        }
+
+        // Récupérer toutes les photos visibles pour un utilisateur non-admin
         List<Photo> allPhotos = photoRepository.findAll();
-        // Filtrer les photos visibles par l'utilisateur
         List<Photo> visiblePhotos = new ArrayList<>();
 
         for (Photo photo : allPhotos) {
-            // Si l'utilisateur est propriétaire de la photo
             if (photo.getOwner().getId().equals(userId)) {
-                photo.getOwner().getUsername();
+                // Si l'utilisateur est le propriétaire de la photo
                 visiblePhotos.add(photo);
-            }
-            // Si la photo est publique
-            else if (photo.getVisibility() == Photo.Visibility.PUBLIC) {
-                photo.getOwner().getUsername();
+            } else if (photo.getVisibility() == Photo.Visibility.PUBLIC) {
+                // Si la photo est publique
                 visiblePhotos.add(photo);
-            }
-            // Si l'utilisateur a une permission sur cette photo
-            else {
+            } else {
+                // Vérifiez si l'utilisateur a une permission sur cette photo
                 Permission permission = permissionRepository.findByPhotoIdAndUserId(photo.getId(), userId).orElse(null);
-                if (permission != null && (permission.getPermissionLevel() == Permission.PermissionLevel.VIEW ||
-                        permission.getPermissionLevel() == Permission.PermissionLevel.EDIT)) {
-                    photo.getOwner().getUsername();
+                if (permission != null) {
                     visiblePhotos.add(photo);
                 }
             }
         }
-
         return visiblePhotos;
     }
+
 
     public Photo uploadPhoto(MultipartFile file, String title, String description, Long ownerId, String visibility) throws IOException {
         if (!isValidFileType(file)) {
