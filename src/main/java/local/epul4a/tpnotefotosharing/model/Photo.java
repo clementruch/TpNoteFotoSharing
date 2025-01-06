@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -35,6 +37,9 @@ public class Photo {
     public Photo(Long id) {
         this.id = id;
     }
+
+    @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Commentaire> comments;
 
     // Enum for visibility
     public enum Visibility {

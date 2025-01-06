@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/photo")
 public class PhotoController {
@@ -117,6 +119,16 @@ public class PhotoController {
         return "Photo";
     }
 
+
+    @GetMapping("/{id}")
+    public String getPhotoDetails(@PathVariable Long id, Model model) {
+        Photo photo = photoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Photo not found"));
+        model.addAttribute("photo", photo);
+        return "PhotoDetails";
+    }
+
+    
     // Récupère l'ID de l'utilisateur actuellement connecté
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

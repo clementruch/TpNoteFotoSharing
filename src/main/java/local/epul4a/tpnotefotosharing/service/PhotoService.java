@@ -19,7 +19,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Service
 public class PhotoService {
 
@@ -35,7 +34,12 @@ public class PhotoService {
     private static final String UPLOAD_DIR = "uploads/";
     private static final long MAX_SIZE = 5 * 1024 * 1024;
 
-    // Méthode pour récupérer les photos visibles par un utilisateur
+    // Méthode pour récupérer une photo par ID
+    public Photo getPhotoById(Long id) {
+        return photoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Photo not found with id: " + id));
+    }
+
     public List<Photo> getPhotosForUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -45,7 +49,6 @@ public class PhotoService {
             return photoRepository.findAll();
         }
 
-        // Logique pour les utilisateurs normaux
         List<Photo> allPhotos = photoRepository.findAll();
         List<Photo> visiblePhotos = new ArrayList<>();
 
@@ -57,6 +60,7 @@ public class PhotoService {
                 visiblePhotos.add(photo); // Ajouter les photos de l'utilisateur lui-même
             } else if (photo.getVisibility() == Photo.Visibility.PUBLIC) {
                 visiblePhotos.add(photo); // Ajouter les photos publiques
+
             } else {
                 Permission permission = permissionRepository.findByPhotoIdAndUserId(photo.getId(), userId).orElse(null);
                 if (permission != null) {
@@ -76,14 +80,11 @@ public class PhotoService {
             throw new RuntimeException("File size exceeds the maximum limit of 5 MB.");
         }
 
-        // Sauvegarder le fichier sur le serveur
         String filePath = saveFile(file);
 
-        // Récupérer l'utilisateur (propriétaire de la photo) à partir de son ID
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Créer un objet Photo et l'enregistrer dans la base de données
         Photo photo = new Photo();
         photo.setTitle(title);
         photo.setDescription(description);
@@ -94,24 +95,18 @@ public class PhotoService {
         return photoRepository.save(photo);
     }
 
-    // Vérification du format de fichier (JPEG, PNG)
     private boolean isValidFileType(MultipartFile file) {
         String fileName = file.getOriginalFilename().toLowerCase();
         return fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png");
     }
 
-    // Sauvegarder le fichier sur le serveur
     private String saveFile(MultipartFile file) throws IOException {
-        // Créer un répertoire si nécessaire
         Path path = Paths.get(UPLOAD_DIR);
         if (!Files.exists(path)) {
             Files.createDirectories(path);
         }
 
-        // Générez un nom unique pour le fichier pour éviter les conflits
         String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-
-        // Sauvegarder le fichier
         Path filePath = path.resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
