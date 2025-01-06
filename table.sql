@@ -1,76 +1,158 @@
--- Create the database
-CREATE DATABASE IF NOT EXISTS FotoSharing;
-USE FotoSharing;
-
--- Table for users
-CREATE TABLE IF NOT EXISTS user (
-                                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                    username VARCHAR(255) NOT NULL UNIQUE,
-                                    email VARCHAR(255) NOT NULL UNIQUE,
-                                    password VARCHAR(255) NOT NULL, -- Updated column name from 'password_hash' to 'password'
-                                    role ENUM('USER', 'ADMIN', 'MODERATOR', 'VISITOR') DEFAULT 'USER',
-                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+create table user
+(
+    id         bigint auto_increment
+        primary key,
+    username   varchar(255)                                                               not null,
+    email      varchar(255)                                                               not null,
+    password   varchar(255)                                                               not null,
+    role       enum ('USER', 'ADMIN', 'MODERATOR', 'VISITOR') default 'USER'              null,
+    created_at timestamp                                      default current_timestamp() null,
+    updated_at timestamp                                      default current_timestamp() null on update current_timestamp(),
+    constraint email
+        unique (email),
+    constraint username
+        unique (username)
 );
 
--- Table for photos
-CREATE TABLE IF NOT EXISTS photo (
-                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                     title VARCHAR(255) NOT NULL,
-                                     description TEXT,
-                                     url VARCHAR(255) NOT NULL,
-                                     visibility ENUM('PRIVATE', 'PUBLIC') DEFAULT 'PRIVATE',
-                                     owner_id BIGINT NOT NULL,
-                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                     FOREIGN KEY (owner_id) REFERENCES user(id) ON DELETE CASCADE -- Updated FK reference from 'utilisateur' to 'user'
+create table album
+(
+    id          bigint auto_increment
+        primary key,
+    name        varchar(255)                                           not null,
+    description text                                                   null,
+    visibility  enum ('PRIVATE', 'PUBLIC') default 'PRIVATE'           null,
+    owner_id    bigint                                                 not null,
+    created_at  timestamp                  default current_timestamp() null,
+    updated_at  timestamp                  default current_timestamp() null on update current_timestamp(),
+    constraint album_ibfk_1
+        foreign key (owner_id) references user (id)
+            on delete cascade
 );
 
--- Table for albums
-CREATE TABLE IF NOT EXISTS album (
-                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                     name VARCHAR(255) NOT NULL,
-                                     description TEXT,
-                                     visibility ENUM('PRIVATE', 'PUBLIC') DEFAULT 'PRIVATE',
-                                     owner_id BIGINT NOT NULL,
-                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                     FOREIGN KEY (owner_id) REFERENCES user(id) ON DELETE CASCADE -- Updated FK reference from 'utilisateur' to 'user'
+create index idx_album_owner
+    on album (owner_id);
+
+create table contact
+(
+    id         bigint auto_increment
+        primary key,
+    created_at datetime(6)                              not null,
+    status     enum ('ACCEPTED', 'DECLINED', 'PENDING') null,
+    contact_id bigint                                   not null,
+    user_id    bigint                                   not null,
+    constraint FKe07k4jcfdophemi6j1lt84b61
+        foreign key (user_id) references user (id),
+    constraint FKqgj7ka9h4nt6snuo4tpj7bh52
+        foreign key (contact_id) references user (id)
 );
 
--- Table for photos within albums
-CREATE TABLE IF NOT EXISTS album_photo (
-                                           album_id BIGINT NOT NULL,
-                                           photo_id BIGINT NOT NULL,
-                                           PRIMARY KEY (album_id, photo_id),
-                                           FOREIGN KEY (album_id) REFERENCES album(id) ON DELETE CASCADE,
-                                           FOREIGN KEY (photo_id) REFERENCES photo(id) ON DELETE CASCADE
+create table photo
+(
+    id          bigint auto_increment
+        primary key,
+    title       varchar(255)                                           not null,
+    description varchar(500)                                           null,
+    url         varchar(255)                                           not null,
+    visibility  enum ('PRIVATE', 'PUBLIC') default 'PRIVATE'           null,
+    owner_id    bigint                                                 not null,
+    created_at  timestamp                  default current_timestamp() null,
+    updated_at  timestamp                  default current_timestamp() null on update current_timestamp(),
+    constraint photo_ibfk_1
+        foreign key (owner_id) references user (id)
+            on delete cascade
 );
 
--- Table for comments
-CREATE TABLE IF NOT EXISTS commentaire (
-                                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                           text TEXT NOT NULL,
-                                           photo_id BIGINT NOT NULL,
-                                           author_id BIGINT NOT NULL,
-                                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                           FOREIGN KEY (photo_id) REFERENCES photo(id) ON DELETE CASCADE,
-                                           FOREIGN KEY (author_id) REFERENCES user(id) ON DELETE CASCADE -- Updated FK reference from 'utilisateur' to 'user'
+create table album_photo
+(
+    album_id bigint not null,
+    photo_id bigint not null,
+    primary key (album_id, photo_id),
+    constraint album_photo_ibfk_1
+        foreign key (album_id) references album (id)
+            on delete cascade,
+    constraint album_photo_ibfk_2
+        foreign key (photo_id) references photo (id)
+            on delete cascade
 );
 
--- Table for photo sharing permissions
-CREATE TABLE IF NOT EXISTS partage (
-                                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                       photo_id BIGINT NOT NULL,
-                                       user_id BIGINT NOT NULL,
-                                       permission_level ENUM('VIEW', 'EDIT', 'ADMIN') DEFAULT 'VIEW',
-                                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                       FOREIGN KEY (photo_id) REFERENCES photo(id) ON DELETE CASCADE,
-                                       FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE -- Updated FK reference from 'utilisateur' to 'user'
+create index photo_id
+    on album_photo (photo_id);
+
+create table commentaire
+(
+    id         bigint auto_increment
+        primary key,
+    text       text                                  not null,
+    photo_id   bigint                                not null,
+    author_id  bigint                                not null,
+    created_at timestamp default current_timestamp() null,
+    updated_at timestamp default current_timestamp() null on update current_timestamp(),
+    constraint commentaire_ibfk_1
+        foreign key (photo_id) references photo (id)
+            on delete cascade,
+    constraint commentaire_ibfk_2
+        foreign key (author_id) references user (id)
+            on delete cascade
 );
 
--- Indexes to optimize queries
-CREATE INDEX idx_photo_owner ON photo(owner_id);
-CREATE INDEX idx_album_owner ON album(owner_id);
-CREATE INDEX idx_partage_user ON partage(user_id);
+create index author_id
+    on commentaire (author_id);
+
+create index photo_id
+    on commentaire (photo_id);
+
+create table partage
+(
+    id               bigint auto_increment
+        primary key,
+    photo_id         bigint                                                     not null,
+    user_id          bigint                                                     not null,
+    permission_level enum ('VIEW', 'EDIT', 'ADMIN') default 'VIEW'              null,
+    created_at       timestamp                      default current_timestamp() null,
+    constraint partage_ibfk_1
+        foreign key (photo_id) references photo (id)
+            on delete cascade,
+    constraint partage_ibfk_2
+        foreign key (user_id) references user (id)
+            on delete cascade
+);
+
+create index idx_partage_user
+    on partage (user_id);
+
+create index photo_id
+    on partage (photo_id);
+
+create index idx_photo_owner
+    on photo (owner_id);
+
+create table users
+(
+    id         bigint auto_increment
+        primary key,
+    created_at datetime(6)                                    not null,
+    email      varchar(255)                                   not null,
+    password   varchar(255)                                   not null,
+    role       enum ('ADMIN', 'MODERATOR', 'USER', 'VISITOR') not null,
+    username   varchar(255)                                   not null,
+    constraint UK6dotkott2kjsp8vw4d0m25fb7
+        unique (email),
+    constraint UKr43af9ap4edm43mmtq01oddj6
+        unique (username)
+);
+
+create table utilisateur
+(
+    id         bigint auto_increment
+        primary key,
+    created_at datetime(6)                                    not null,
+    email      varchar(255)                                   not null,
+    password   varchar(255)                                   not null,
+    role       enum ('ADMIN', 'MODERATOR', 'USER', 'VISITOR') not null,
+    username   varchar(255)                                   not null,
+    constraint UKkq7nt5wyq9v9lpcpgxag2f24a
+        unique (username),
+    constraint UKrma38wvnqfaf66vvmi57c71lo
+        unique (email)
+);
+
