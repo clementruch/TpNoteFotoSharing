@@ -17,6 +17,14 @@
     <p><strong>Visibilité:</strong> <span th:text="${photo.visibility}">Public/Privé</span></p>
     <p><strong>Propriétaire:</strong> <span th:text="${photo.owner.username}">Nom Propriétaire</span></p>
 
+    <div class="mt-4" th:if="${canModify}">
+        <a th:href="@{/photo/update/{photoId}(photoId=${photo.id})}" class="btn btn-warning me-2">Modifier</a>
+        <form th:action="@{/photo/delete/{photoId}(photoId=${photo.id})}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+        </form>
+    </div>
+
+
     <hr />
 
     <h3>Commentaires</h3>

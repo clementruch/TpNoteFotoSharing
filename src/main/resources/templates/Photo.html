@@ -6,12 +6,10 @@
     <link href="/static/css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Styles for hover effect */
         .card {
             position: relative;
             overflow: hidden;
         }
-
         .card-body {
             position: absolute;
             bottom: 0;
@@ -24,17 +22,14 @@
             transition: transform 0.3s ease-in-out;
             opacity: 0.9;
         }
-
         .card:hover .card-body {
             transform: translateY(0);
         }
-
         .card-img-top {
             display: block;
             width: 100%;
             height: auto;
         }
-
         .card-link {
             text-decoration: none;
             color: inherit;
@@ -46,44 +41,24 @@
 
 <main class="flex-grow-1 container my-4">
     <h1 class="text-center mb-4">Galerie de Photos</h1>
-    <!-- Afficher un message si aucune photo n'est visible -->
     <div th:if="${#lists.isEmpty(photosWithPermissions)}" class="alert alert-info text-center mt-4">
         <p>Aucune photo visible pour le moment.</p>
     </div>
 
     <div th:if="${!#lists.isEmpty(photosWithPermissions)}" class="row g-3 photo-gallery">
         <div th:each="photoData : ${photosWithPermissions}" class="col-md-4">
-            <a th:href="@{/photo/{id}(id=${photo.id})}" class="card-link">
-                <div class="card">
-                    <img
-                            th:src="@{'/' + ${photoData.photo.url}}"
-                            alt="Photo"
-                            class="card-img-top"
-                            onclick="openModal(this)"
-                            style="cursor: pointer;"/>
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${photoData.photo.title ?: 'Sans titre'}"></h5>
-                        <p class="card-text"
-                           th:text="${photoData.photo.description ?: 'Pas de description disponible'}"></p>
-                        <p class="card-text">
-                            <strong>Visibilité :</strong>
-                            <span th:text="${photoData.photo.visibility ?: 'Inconnue'}"></span>
-                        </p>
-                        <p class="card-text">
-                            <strong>Propriétaire :</strong>
-                            <span th:text="${photoData.photo.owner?.username ?: 'Inconnu'}"></span>
-                        </p>
-                        <!-- Actions conditionnées par les permissions -->
-                        <div th:if="${photoData.canModify}" class="d-flex justify-content-between">
-                            <a th:href="@{/photo/update/{photoId}(photoId=${photoData.photo.id})}"
-                               class="btn btn-warning btn-sm">Modifier</a>
-                            <form th:action="@{/photo/delete/{photoId}(photoId=${photoData.photo.id})}" method="post">
-                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                            </form>
+            <!-- Ensure 'photoData.photo' is not null -->
+            <div th:if="${photoData.photo != null}">
+                <a th:href="@{/photo/{id}(id=${photoData.photo.id ?: 0})}" class="card-link">
+                    <div class="card">
+                        <img th:src="@{'/' + ${photoData.photo.url ?: ''}}" alt="Photo" class="card-img-top"
+                             style="cursor: pointer;" />
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${photoData.photo.title ?: 'Sans titre'}"></h5>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
         </div>
     </div>
 </main>
