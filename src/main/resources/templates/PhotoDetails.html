@@ -22,19 +22,23 @@
     <h3>Commentaires</h3>
     <form th:action="@{/photo/{id}/comments(id=${photo.id})}" method="post">
         <div class="mb-3">
-            <label for="comment" class="form-label">Ajouter un commentaire</label>
-            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+            <label for="commentText" class="form-label">Ajouter un commentaire</label>
+            <textarea class="form-control" id="commentText" name="commentText" rows="3" required></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Soumettre</button>
     </form>
 
     <div class="mt-4">
         <h4>Commentaires existants:</h4>
-        <div th:each="comment : ${photo.comments}">
-            <div class="mb-3">
-                <strong th:text="${comment.username}">Nom de l'utilisateur</strong>
-                <p th:text="${comment.content}">Commentaire</p>
+        <div th:if="${photo.comments != null}">
+            <div th:each="comment : ${photo.comments}" class="mb-3">
+                <strong th:text="${comment.author.username}">Nom de l'utilisateur</strong>
+                <p th:text="${comment.text}">Commentaire</p>
+                <small class="text-muted" th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">Date et heure</small>
             </div>
+        </div>
+        <div th:if="${photo.comments == null || photo.comments.isEmpty()}">
+            <p class="text-muted">Aucun commentaire pour cette photo.</p>
         </div>
     </div>
 </main>
