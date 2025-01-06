@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer un Album</title>
+</head>
+<body>
+<h1>Créer un Album</h1>
+<form th:action="@{/albums/add}" method="post">
+    <div class="mb-3">
+        <label for="name" class="form-label">Nom de l'album :</label>
+        <input type="text" id="name" name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="title" class="form-label">Titre de l'album :</label>
+        <input type="text" id="title" name="title" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description :</label>
+        <textarea id="description" name="description" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="visibility" class="form-label">Visibilité :</label>
+        <select id="visibility" name="visibility" class="form-select" required>
+            <option value="PUBLIC">Public</option>
+            <option value="PRIVATE">Privé</option>
+        </select>
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-success">Créer l'Album</button>
+    </div>
+</form>
+
+
+</body>
+</html>

@@ -56,6 +56,13 @@
                         class="card-img-top"
                         onclick="openModal(this)"
                         style="cursor: pointer;" />
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${photo.title}"></h5>
+                    <p class="card-text" th:text="${photo.description}"></p>
+                    <p class="card-text"><strong>Visibilité :</strong> <span th:text="${photo.visibility}"></span></p>
+                    <p class="card-text"><strong>Propriétaire :</strong> <span th:text="${photo.owner.username}"></span></p>
+                    <a th:href="@{'/photo/' + ${photo.id} + '/add-to-album'}" class="btn btn-primary mt-2">Ajouter à un album</a>
+                </div>
             </div>
         </div>
     </div>
@@ -73,6 +80,7 @@
             <p id="modalDescription">Description</p>
             <p><strong>Visibilité :</strong> <span id="modalVisibility">Public/Privé</span></p>
             <p><strong>Propriétaire :</strong> <span id="modalOwner">Nom propriétaire</span></p>
+            <a><strong></strong></a>
         </div>
     </div>
 </div>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter une photo à un album</title>
+</head>
+<body>
+<h1>Ajouter la photo à un album</h1>
+<form th:action="@{'/photo/' + ${photo.id} + '/add-to-album'}" method="post">
+    <label for="album">Choisissez un album :</label>
+    <select id="album" name="albumId">
+        <option th:each="album : ${albums}" th:value="${album.id}" th:text="${album.title}"></option>
+    </select>
+    <button type="submit">Ajouter</button>
+</form>
+</body>
+</html>

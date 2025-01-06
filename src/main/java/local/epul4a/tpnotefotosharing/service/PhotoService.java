@@ -9,6 +9,8 @@ import local.epul4a.tpnotefotosharing.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import local.epul4a.tpnotefotosharing.model.Album;
+import local.epul4a.tpnotefotosharing.repository.AlbumRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +33,13 @@ public class PhotoService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AlbumRepository albumRepository;
+
+    @Autowired
+    private AlbumService albumService;
+
 
     private static final String UPLOAD_DIR = "uploads/";
     private static final long MAX_SIZE = 5 * 1024 * 1024;
@@ -118,5 +127,19 @@ public class PhotoService {
 
         return filePath.toString().replace("uploads" + File.separator, "");
     }
+    public void addPhotoToAlbum(Long photoId, Long albumId) {
+        Photo photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo not found with ID: " + photoId));
+        Album album = albumRepository.findById(albumId)
+                .orElseThrow(() -> new RuntimeException("Album not found with ID: " + albumId));
+
+        photo.setAlbum(album); // Associe la photo à l'album
+        photoRepository.save(photo); // Enregistre les modifications
+    }
+    public Photo getPhotoById(Long photoId) {
+        return photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo not found with ID: " + photoId));
+    }
+
 
 }

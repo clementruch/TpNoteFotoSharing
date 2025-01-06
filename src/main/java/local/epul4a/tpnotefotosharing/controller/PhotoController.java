@@ -1,6 +1,7 @@
 package local.epul4a.tpnotefotosharing.controller;
 
 import local.epul4a.tpnotefotosharing.model.Permission;
+import local.epul4a.tpnotefotosharing.repository.AlbumRepository;
 import local.epul4a.tpnotefotosharing.service.ContactService;
 import local.epul4a.tpnotefotosharing.service.PermissionService;
 import local.epul4a.tpnotefotosharing.service.PhotoService;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import local.epul4a.tpnotefotosharing.model.Album;
+import local.epul4a.tpnotefotosharing.service.AlbumService;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,6 +41,8 @@ public class PhotoController {
     @Autowired
     private UserRepository userRepository;  // Repository pour gérer les utilisateurs
 
+    @Autowired
+    private AlbumService albumService;
     // Méthode pour afficher toutes les photos
     @GetMapping("/Photo")
     public String index(Model model) {
@@ -94,4 +99,21 @@ public class PhotoController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return user.getId();
     }
+    @GetMapping("/{photoId}/add-to-album")
+    public String showAddToAlbumForm(@PathVariable Long photoId, Model model) {
+        Long userId = getCurrentUserId(); // Récupère l'utilisateur connecté
+        Photo photo = photoService.getPhotoById(photoId); // Récupère la photo sélectionnée
+        List<Album> albums = albumService.getAlbumsByOwnerId(userId); // Récupère les albums de l'utilisateur
+
+        model.addAttribute("photo", photo); // Ajoute la photo au modèle
+        model.addAttribute("albums", albums); // Ajoute la liste des albums au modèle
+        return "addToAlbum"; // Retourne le fichier Thymeleaf addToAlbum.html
+    }
+    // Ajoute une photo à un album
+    @PostMapping("/{photoId}/add-to-album")
+    public String addPhotoToAlbum(@PathVariable Long photoId, @RequestParam Long albumId) {
+        photoService.addPhotoToAlbum(photoId, albumId); // Associe la photo à l'album
+        return "redirect:/photo/Photo"; // Redirige vers la galerie
+    }
+
 }

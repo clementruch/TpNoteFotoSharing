@@ -13,6 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import local.epul4a.tpnotefotosharing.service.AlbumService;
+import local.epul4a.tpnotefotosharing.model.Album;
+import local.epul4a.tpnotefotosharing.service.AlbumService;
 
 import java.util.List;
 
@@ -34,6 +37,9 @@ public class HomeController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        List<Album> albums = albumService.getAlbumsByOwnerUsername(username); // Récupérer les albums de l'utilisateur
+        model.addAttribute("albums", albums);
+
         // Récupère la liste des photos partagées
         List<Photo> photos = photoService.getPhotosForUser(user.getId());
         model.addAttribute("photos", photos);
@@ -41,4 +47,7 @@ public class HomeController {
         logger.info("Current logged-in user: {}", username);
         return "home";
     }
+    @Autowired
+    private AlbumService albumService;
+
 }
