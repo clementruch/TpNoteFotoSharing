@@ -1,5 +1,6 @@
 package local.epul4a.tpnotefotosharing.controller;
 
+import local.epul4a.tpnotefotosharing.model.Contact;
 import local.epul4a.tpnotefotosharing.model.Permission;
 import local.epul4a.tpnotefotosharing.repository.AlbumRepository;
 import local.epul4a.tpnotefotosharing.service.ContactService;
@@ -9,7 +10,9 @@ import local.epul4a.tpnotefotosharing.model.Photo;
 import local.epul4a.tpnotefotosharing.repository.PhotoRepository;
 import local.epul4a.tpnotefotosharing.repository.UserRepository;
 import local.epul4a.tpnotefotosharing.model.User;
+import local.epul4a.tpnotefotosharing.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -20,7 +23,12 @@ import local.epul4a.tpnotefotosharing.model.Album;
 import local.epul4a.tpnotefotosharing.service.AlbumService;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/photo")
@@ -31,6 +39,9 @@ public class PhotoController {
 
     @Autowired
     private PhotoService photoService;
+
+    @Autowired
+    private SecurityService securityService;
 
     @Autowired
     private ContactService contactService;
@@ -46,9 +57,30 @@ public class PhotoController {
     // Méthode pour afficher toutes les photos
     @GetMapping("/Photo")
     public String index(Model model) {
-        model.addAttribute("photos", photoService.getPhotosForUser(getCurrentUserId()));  // Utilisation de l'ID de l'utilisateur connecté
-        return "Photo";  // Nom de la vue Thymeleaf pour afficher les photos
+        Long userId = getCurrentUserId();
+        List<Photo> photos = photoService.getPhotosForUser(userId);
+
+        // Ajout des permissions pour chaque photo
+        List<Map<String, Object>> photosWithPermissions = photos.stream().map(photo -> {
+            Map<String, Object> photoData = new HashMap<>();
+            photoData.put("photo", photo);
+
+            boolean canModify = isAdminOrCanModifyPhoto(userId, photo);
+            photoData.put("canModify", canModify);
+
+            return photoData;
+        }).collect(Collectors.toList());
+
+        model.addAttribute("photosWithPermissions", photosWithPermissions);
+        return "Photo";
     }
+
+    private boolean isAdminOrCanModifyPhoto(Long userId, Photo photo) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getRole() == User.Role.ADMIN || photo.getOwner().getId().equals(userId);
+    }
+
 
     // Méthode pour afficher le formulaire d'ajout de photo
     @GetMapping("/photos/add")
@@ -79,16 +111,25 @@ public class PhotoController {
     @GetMapping("/photo/Photo")
     public String viewPhotos(Model model, Authentication authentication) {
         Long userId = getCurrentUserId();
+        System.out.println("DEBUG - Current User: " + authentication.getName());
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Si l'utilisateur est ADMIN, récupérer toutes les photos
         if (user.getRole() == User.Role.ADMIN) {
             model.addAttribute("photos", photoRepository.findAll());
         } else {
             model.addAttribute("photos", photoService.getPhotosForUser(userId));
         }
         return "Photo";
+    }
+
+    @GetMapping("/{id}")
+    public String getPhotoDetails(@PathVariable Long id, Model model) {
+        Photo photo = photoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Photo not found"));
+        model.addAttribute("photo", photo);
+        return "PhotoDetails";
     }
     
     // Récupère l'ID de l'utilisateur actuellement connecté
@@ -99,6 +140,7 @@ public class PhotoController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return user.getId();
     }
+  
     @GetMapping("/{photoId}/add-to-album")
     public String showAddToAlbumForm(@PathVariable Long photoId, Model model) {
         Long userId = getCurrentUserId(); // Récupère l'utilisateur connecté
@@ -116,4 +158,46 @@ public class PhotoController {
         return "redirect:/photo/Photo"; // Redirige vers la galerie
     }
 
+    @PostMapping("/delete/{photoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or @photoService.isOwner(authentication.name, #photoId)")
+    public String deletePhoto(@PathVariable Long photoId) {
+        photoService.deletePhoto(photoId);
+        return "redirect:/photo/Photo";
+    }
+
+    @GetMapping("/update/{photoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or @photoService.isOwner(authentication.name, #photoId)")
+    public String showUpdateForm(@PathVariable Long photoId, Model model) {
+        Photo photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo not found"));
+
+        Long userId = getCurrentUserId();
+        List<Contact> contacts = contactService.getContactsForUser(userId); // Les contacts disponibles
+        List<User> sharedWith = permissionService.getUsersWithAccessToPhoto(photoId); // Les utilisateurs ayant accès à la photo
+
+        model.addAttribute("photo", photo);
+        model.addAttribute("contacts", contacts);
+        model.addAttribute("sharedWith", sharedWith);
+        return "updatePhotoForm";
+    }
+
+    @PostMapping("/update/{photoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or @photoService.isOwner(authentication.name, #photoId)")
+    public String updatePhoto(@PathVariable Long photoId,
+                              @RequestParam String title,
+                              @RequestParam String description,
+                              @RequestParam String visibility,
+                              @RequestParam(value = "contacts", required = false) List<Long> contactIds) {
+        photoService.updatePhoto(photoId, title, description, visibility);
+
+        // Mettre à jour les permissions si la visibilité est privée
+        if ("PRIVATE".equals(visibility)) {
+            permissionService.updatePermissionsForPhoto(photoId, contactIds);
+        } else {
+            // Supprimer les permissions si la visibilité passe à "PUBLIC"
+            permissionService.removePermissionsForPhoto(photoId);
+        }
+
+        return "redirect:/photo/Photo";
+    }
 }
