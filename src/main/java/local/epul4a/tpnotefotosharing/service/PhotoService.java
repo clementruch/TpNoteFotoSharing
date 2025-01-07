@@ -48,7 +48,6 @@ public class PhotoService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (user.getRole() == User.Role.ADMIN) {
-            // Si l'utilisateur est un admin, retourner toutes les photos
             return photoRepository.findAll();
         }
 
@@ -57,17 +56,17 @@ public class PhotoService {
 
         for (Photo photo : allPhotos) {
             if (photo.getOwner() == null || photo.getUrl() == null) {
-                continue; // Ignorer les photos avec des informations manquantes
+                continue;
             }
             if (photo.getOwner().getId().equals(userId)) {
-                visiblePhotos.add(photo); // Ajouter les photos de l'utilisateur lui-même
+                visiblePhotos.add(photo);
             } else if (photo.getVisibility() == Photo.Visibility.PUBLIC) {
-                visiblePhotos.add(photo); // Ajouter les photos publiques
+                visiblePhotos.add(photo);
 
             } else {
                 Permission permission = permissionRepository.findByPhotoIdAndUserId(photo.getId(), userId).orElse(null);
                 if (permission != null) {
-                    visiblePhotos.add(photo); // Ajouter les photos accessibles par permissions
+                    visiblePhotos.add(photo);
                 }
             }
         }
@@ -121,8 +120,8 @@ public class PhotoService {
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new RuntimeException("Album not found with ID: " + albumId));
 
-        photo.setAlbum(album); // Associe la photo à l'album
-        photoRepository.save(photo); // Enregistre les modifications
+        photo.setAlbum(album);
+        photoRepository.save(photo);
     }
     public Photo getPhotoById(Long photoId) {
         return photoRepository.findById(photoId)

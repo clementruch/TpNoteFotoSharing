@@ -56,24 +56,20 @@ public class ContactService {
     }
 
     public void respondToContactRequest(Long contactId, boolean accept) {
-        // Récupérer la demande de contact existante
         Contact contact = contactRepository.findById(contactId)
                 .orElseThrow(() -> new RuntimeException("Contact request not found"));
 
         if (accept) {
-            // Mettre à jour le statut de la demande initiale
             contact.setStatus(Contact.ContactStatus.ACCEPTED);
 
-            // Vérifier si une relation réciproque existe déjà
             boolean reciprocalExists = contactRepository.existsByUserIdAndContactId(
                     contact.getContact().getId(), contact.getUser().getId()
             );
 
             if (!reciprocalExists) {
-                // Créer la relation réciproque
                 Contact reciprocalContact = new Contact();
-                reciprocalContact.setUser(contact.getContact()); // L'utilisateur qui a reçu la demande
-                reciprocalContact.setContact(contact.getUser()); // L'utilisateur qui a envoyé la demande
+                reciprocalContact.setUser(contact.getContact());
+                reciprocalContact.setContact(contact.getUser());
                 reciprocalContact.setStatus(Contact.ContactStatus.ACCEPTED);
                 reciprocalContact.setCreatedAt(LocalDateTime.now());
                 reciprocalContact.setSelected(false);
@@ -85,7 +81,6 @@ public class ContactService {
             contact.setStatus(Contact.ContactStatus.DECLINED);
         }
 
-        // Sauvegarder les modifications sur la demande initiale
         contactRepository.save(contact);
     }
 

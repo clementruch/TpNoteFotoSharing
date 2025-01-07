@@ -37,7 +37,7 @@ public class RegisterController {
             utilisateur.setUsername(username);
             utilisateur.setEmail(email);
             utilisateur.setPassword(encodedPassword);
-            utilisateur.setRole(User.Role.USER); // Fixed: Ensure default role is set
+            utilisateur.setRole(User.Role.USER);
             utilisateurService.saveUser(utilisateur);
             logger.info("User registered successfully: {}", username);
             return "redirect:/login";

@@ -46,7 +46,6 @@ public class AlbumController {
         return "addAlbum";
     }
 
-    // Méthode POST pour gérer la soumission du formulaire
     @PostMapping("/add")
     public String addAlbum(@RequestParam String name,
                            @RequestParam String title,

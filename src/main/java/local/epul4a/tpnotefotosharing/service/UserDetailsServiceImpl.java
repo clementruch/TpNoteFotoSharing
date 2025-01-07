@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 
 @Service
 public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
-    //we create a logger object to log various details
     private static final Logger logger = LoggerFactory.getLogger(RegisterController.class);
     private final UserRepository userRepository;
 

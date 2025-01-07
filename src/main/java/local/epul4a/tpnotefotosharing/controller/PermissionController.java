@@ -20,7 +20,7 @@ public class PermissionController {
                                   @RequestParam Long userId,
                                   @RequestParam Permission.PermissionLevel permissionLevel) {
         permissionService.grantPermission(photoId, userId, permissionLevel);
-        return "redirect:/photo/Photo"; // Redirige vers la galerie ou une autre page
+        return "redirect:/photo/Photo";
     }
 
     // Supprimer une permission d'un utilisateur sur une photo
@@ -28,13 +28,13 @@ public class PermissionController {
     public String revokePermission(@RequestParam Long photoId,
                                    @RequestParam Long userId) {
         permissionService.deletePermission(photoId, userId);
-        return "redirect:/photo/Photo"; // Redirige vers la galerie ou une autre page
+        return "redirect:/photo/Photo";
     }
 
-    // Afficher les permissions d'une photo (à des fins de gestion)
+    // Afficher les permissions d'une photo
     @GetMapping("/list/{photoId}")
     public String listPermissions(@PathVariable Long photoId, Model model) {
         model.addAttribute("permissions", permissionService.getPermissionsForPhoto(photoId));
-        return "permissions"; // Vue pour afficher les permissions
+        return "permissions";
     }
 }

@@ -42,7 +42,6 @@ public class Photo {
     @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Commentaire> comments;
 
-    // Enum for visibility
     public enum Visibility {
         PRIVATE, PUBLIC
     }

@@ -2,7 +2,6 @@ package local.epul4a.tpnotefotosharing.controller;
 
 import local.epul4a.tpnotefotosharing.model.Contact;
 import local.epul4a.tpnotefotosharing.model.Permission;
-import local.epul4a.tpnotefotosharing.repository.AlbumRepository;
 import local.epul4a.tpnotefotosharing.service.ContactService;
 import local.epul4a.tpnotefotosharing.service.PermissionService;
 import local.epul4a.tpnotefotosharing.service.PhotoService;
@@ -35,13 +34,10 @@ import java.util.Optional;
 public class PhotoController {
 
     @Autowired
-    private PhotoRepository photoRepository;  // Repository pour gérer les photos
+    private PhotoRepository photoRepository;
 
     @Autowired
     private PhotoService photoService;
-
-    @Autowired
-    private SecurityService securityService;
 
     @Autowired
     private ContactService contactService;
@@ -50,7 +46,7 @@ public class PhotoController {
     private PermissionService permissionService;
 
     @Autowired
-    private UserRepository userRepository;  // Repository pour gérer les utilisateurs
+    private UserRepository userRepository;
 
     @Autowired
     private AlbumService albumService;
@@ -60,7 +56,6 @@ public class PhotoController {
         Long userId = getCurrentUserId();
         List<Photo> photos = photoService.getPhotosForUser(userId);
 
-        // Ajout des permissions pour chaque photo
         List<Map<String, Object>> photosWithPermissions = photos.stream().map(photo -> {
             Map<String, Object> photoData = new HashMap<>();
             photoData.put("photo", photo);
@@ -81,8 +76,6 @@ public class PhotoController {
         return user.getRole() == User.Role.ADMIN || photo.getOwner().getId().equals(userId);
     }
 
-
-    // Méthode pour afficher le formulaire d'ajout de photo
     @GetMapping("/photos/add")
     public String showAddPhotoForm(Model model) {
         Long userId = getCurrentUserId();
@@ -92,8 +85,6 @@ public class PhotoController {
         return "addPhoto";
     }
 
-
-    // Méthode pour ajouter une nouvelle photo après soumission du formulaire
     @PostMapping("/photos/add")
     public String addPhoto(@ModelAttribute Photo photo,
                            @RequestParam("file") MultipartFile file,
@@ -137,7 +128,6 @@ public class PhotoController {
         return "PhotoDetails";
     }
 
-    // Récupère l'ID de l'utilisateur actuellement connecté
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -148,19 +138,19 @@ public class PhotoController {
   
     @GetMapping("/{photoId}/add-to-album")
     public String showAddToAlbumForm(@PathVariable Long photoId, Model model) {
-        Long userId = getCurrentUserId(); // Récupère l'utilisateur connecté
-        Photo photo = photoService.getPhotoById(photoId); // Récupère la photo sélectionnée
-        List<Album> albums = albumService.getAlbumsByOwnerId(userId); // Récupère les albums de l'utilisateur
+        Long userId = getCurrentUserId();
+        Photo photo = photoService.getPhotoById(photoId);
+        List<Album> albums = albumService.getAlbumsByOwnerId(userId);
 
-        model.addAttribute("photo", photo); // Ajoute la photo au modèle
-        model.addAttribute("albums", albums); // Ajoute la liste des albums au modèle
-        return "addToAlbum"; // Retourne le fichier Thymeleaf addToAlbum.html
+        model.addAttribute("photo", photo);
+        model.addAttribute("albums", albums);
+        return "addToAlbum";
     }
-    // Ajoute une photo à un album
+
     @PostMapping("/{photoId}/add-to-album")
     public String addPhotoToAlbum(@PathVariable Long photoId, @RequestParam Long albumId) {
-        photoService.addPhotoToAlbum(photoId, albumId); // Associe la photo à l'album
-        return "redirect:/photo/Photo"; // Redirige vers la galerie
+        photoService.addPhotoToAlbum(photoId, albumId);
+        return "redirect:/photo/Photo";
     }
 
     @PostMapping("/delete/{photoId}")

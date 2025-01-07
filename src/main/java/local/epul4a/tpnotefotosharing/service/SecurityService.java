@@ -13,7 +13,6 @@ public class SecurityService {
     private PhotoService photoService;
 
     public boolean canModifyPhoto(Long userId, Photo photo) {
-        // L'utilisateur peut modifier la photo s'il est propriétaire ou a un rôle spécifique
         return photo.getOwner().getId().equals(userId) ||
                 SecurityContextHolder.getContext().getAuthentication().getAuthorities()
                         .stream()

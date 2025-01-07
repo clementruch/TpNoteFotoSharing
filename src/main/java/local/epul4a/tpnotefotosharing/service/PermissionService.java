@@ -76,10 +76,8 @@ public class PermissionService {
     }
 
     public void updatePermissionsForPhoto(Long photoId, List<Long> contactIds) {
-        // Supprime les anciennes permissions
         permissionRepository.deleteByPhotoId(photoId);
 
-        // Ajoute les nouvelles permissions
         if (contactIds != null) {
             contactIds.forEach(contactId -> {
                 Permission permission = new Permission();

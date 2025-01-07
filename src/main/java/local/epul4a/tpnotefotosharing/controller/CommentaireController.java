@@ -28,16 +28,13 @@ public class CommentaireController {
 
     @PostMapping("/{id}/comments")
     public String addComment(@PathVariable Long id, @RequestParam String commentText) {
-        // Get the currently authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Add the comment
         commentaireService.addComment(id, user.getId(), commentText);
 
-        // Redirect back to the photo detail page
         return "redirect:/photo/" + id + "/details";
     }
 

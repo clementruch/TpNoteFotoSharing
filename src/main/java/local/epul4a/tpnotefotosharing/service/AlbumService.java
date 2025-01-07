@@ -34,7 +34,7 @@ public class AlbumService {
     }
 
     public List<Album> getAllAlbums() {
-        return albumRepository.findAll(); // Retourne tous les albums
+        return albumRepository.findAll();
     }
 
     public Album getAlbumById(Long id) {

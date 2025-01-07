@@ -16,10 +16,8 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
 
     Optional<Permission> findByPhotoIdAndUserId(Long photoId, Long userId);
 
-    // Ajoute une méthode pour trouver toutes les permissions d'une photo
     List<Permission> findByPhotoId(Long photoId);
 
-    // Ajoute une méthode pour supprimer les permissions par photoId
     @Transactional
     @Modifying
     @Query("DELETE FROM Permission p WHERE p.photo.id = :photoId")
