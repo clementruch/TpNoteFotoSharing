@@ -7,39 +7,56 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <div th:replace="~{layout/header.html}"></div>
+<div th:replace="~{layout/header.html}"></div>
 
-    <main class="flex-grow-1">
-        <div class="container mt-4">
-            <div class="text-end">
-                <h5>Bienvenue, <span th:text="${username}"></span>!</h5>
-                <a th:href="@{/logout}" class="btn btn-danger btn-sm">Se Déconnecter</a>
-            </div>
+<main class="flex-grow-1">
+    <div class="container mt-4">
+        <div class="text-end">
+            <h5>Bienvenue, <span th:text="${username}"></span>!</h5>
+            <a th:href="@{/logout}" class="btn btn-danger btn-sm">Se Déconnecter</a>
+        </div>
 
-            <h2 class="text-center mt-4">Dernières photos partagées</h2>
+        <h2 class="text-center mt-4">Mes Albums</h2>
+        <div th:if="${#lists.isEmpty(albums)}" class="alert alert-info text-center mt-4">
+            <p>Aucun album créé pour le moment.</p>
+        </div>
+        <div class="row mt-4" th:if="${!#lists.isEmpty(albums)}">
+            <div th:each="album : ${albums}" class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${album.title}"></h5>
+                        <p th:text="'Visibilité : ' + ${album.visibility}"></p>
+                        <a th:href="@{'/albums/' + ${album.id}}" class="btn btn-primary">Voir l'album</a>
 
-            <div th:if="${#lists.isEmpty(photos)}" class="alert alert-info text-center mt-4">
-                <p>Aucune photo à afficher pour le moment.</p>
-            </div>
-
-            <div class="row mt-4" th:if="${!#lists.isEmpty(photos)}">
-                <div th:each="photo : ${photos}" class="col-md-4 photo-card">
-                    <div class="card">
-                        <img th:src="@{${photo.url}}" alt="Photo" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title" th:text="${photo.title}">Titre de la photo</h5>
-                            <p class="card-text" th:text="${photo.description}">Description</p>
-                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="text-center mt-4">
+            <a th:href="@{/albums/add}" class="btn btn-success">Créer un Nouvel Album</a>
+        </div>
 
-            <div class="text-center mt-4">
-                <a th:href="@{/photo/photos/add}" class="btn btn-primary">Télécharger une nouvelle photo</a>
+        <h2 class="text-center mt-4">Dernières photos partagées</h2>
+        <div th:if="${#lists.isEmpty(photos)}" class="alert alert-info text-center mt-4">
+            <p>Aucune photo à afficher pour le moment.</p>
+        </div>
+        <div class="row mt-4" th:if="${!#lists.isEmpty(photos)}">
+            <div th:each="photo : ${photos}" class="col-md-4 photo-card">
+                <div class="card">
+                    <img th:src="@{${photo.url}}" alt="Photo" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${photo.title}">Titre de la photo</h5>
+                        <p class="card-text" th:text="${photo.description}">Description</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </main>
+        <div class="text-center mt-4">
+            <a th:href="@{/photo/photos/add}" class="btn btn-primary">Télécharger une nouvelle photo</a>
+        </div>
+    </div>
+</main>
 
-    <div th:replace="~{layout/footer.html}"></div>
+<div th:replace="~{layout/footer.html}"></div>
 </body>
 </html>

@@ -55,6 +55,7 @@
                              style="cursor: pointer;" />
                         <div class="card-body">
                             <h5 class="card-title" th:text="${photoData.photo.title ?: 'Sans titre'}"></h5>
+                            <a th:href="@{'/photo/' + ${photo.id} + '/add-to-album'}" class="btn btn-primary mt-2">Ajouter à un album</a>
                         </div>
                     </div>
                 </a>
