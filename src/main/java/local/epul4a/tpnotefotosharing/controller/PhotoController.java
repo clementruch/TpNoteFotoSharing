@@ -125,13 +125,18 @@ public class PhotoController {
     }
 
     @GetMapping("/{id}")
-    public String getPhotoDetails(@PathVariable Long id, Model model) {
+    public String getPhotoDetails(@PathVariable Long id, Model model, Authentication authentication) {
         Photo photo = photoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Photo not found"));
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean canModify = user.getRole() == User.Role.ADMIN || photo.getOwner().getId().equals(user.getId());
+        model.addAttribute("canModify", canModify);
         model.addAttribute("photo", photo);
         return "PhotoDetails";
     }
-    
+
     // Récupère l'ID de l'utilisateur actuellement connecté
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -172,8 +177,8 @@ public class PhotoController {
                 .orElseThrow(() -> new RuntimeException("Photo not found"));
 
         Long userId = getCurrentUserId();
-        List<Contact> contacts = contactService.getContactsForUser(userId); // Les contacts disponibles
-        List<User> sharedWith = permissionService.getUsersWithAccessToPhoto(photoId); // Les utilisateurs ayant accès à la photo
+        List<Contact> contacts = contactService.getContactsForUser(userId);
+        List<User> sharedWith = permissionService.getUsersWithAccessToPhoto(photoId);
 
         model.addAttribute("photo", photo);
         model.addAttribute("contacts", contacts);
@@ -190,11 +195,9 @@ public class PhotoController {
                               @RequestParam(value = "contacts", required = false) List<Long> contactIds) {
         photoService.updatePhoto(photoId, title, description, visibility);
 
-        // Mettre à jour les permissions si la visibilité est privée
         if ("PRIVATE".equals(visibility)) {
             permissionService.updatePermissionsForPhoto(photoId, contactIds);
         } else {
-            // Supprimer les permissions si la visibilité passe à "PUBLIC"
             permissionService.removePermissionsForPhoto(photoId);
         }
 
