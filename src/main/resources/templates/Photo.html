@@ -10,6 +10,7 @@
             position: relative;
             overflow: hidden;
         }
+
         .card-body {
             position: absolute;
             bottom: 0;
@@ -22,14 +23,17 @@
             transition: transform 0.3s ease-in-out;
             opacity: 0.9;
         }
+
         .card:hover .card-body {
             transform: translateY(0);
         }
+
         .card-img-top {
             display: block;
             width: 100%;
             height: auto;
         }
+
         .card-link {
             text-decoration: none;
             color: inherit;
@@ -52,10 +56,13 @@
                 <a th:href="@{/photo/{id}(id=${photoData.photo.id ?: 0})}" class="card-link">
                     <div class="card">
                         <img th:src="@{'/' + ${photoData.photo.url ?: ''}}" alt="Photo" class="card-img-top"
-                             style="cursor: pointer;" />
+                             style="cursor: pointer;"/>
                         <div class="card-body">
                             <h5 class="card-title" th:text="${photoData.photo.title ?: 'Sans titre'}"></h5>
-                            <a th:href="@{'/photo/' + ${photo.id} + '/add-to-album'}" class="btn btn-primary mt-2">Ajouter à un album</a>
+                            <a th:if="${photoData.photo != null}"
+                               th:href="@{'/photo/' + (${photoData.photo.id ?: 0}) + '/add-to-album'}"
+                               class="btn btn-primary mt-2">Ajouter à un album
+                            </a>
                         </div>
                     </div>
                 </a>

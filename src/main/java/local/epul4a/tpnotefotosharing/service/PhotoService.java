@@ -43,12 +43,6 @@ public class PhotoService {
     private static final String UPLOAD_DIR = "uploads/";
     private static final long MAX_SIZE = 5 * 1024 * 1024;
 
-    // Méthode pour récupérer une photo par ID
-    public Photo getPhotoById(Long id) {
-        return photoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Photo not found with id: " + id));
-    }
-
     public List<Photo> getPhotosForUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
