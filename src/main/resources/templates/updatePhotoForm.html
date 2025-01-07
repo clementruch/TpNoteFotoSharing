@@ -2,13 +2,21 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier une Photo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .form-section {
             max-width: 600px;
             margin: 0 auto;
+        }
+
+        select.form-select option {
+            color: #000 !important;
+            background-color: #fff !important;
+        }
+
+        .d-none {
+            display: none !important;
         }
     </style>
 </head>
@@ -20,7 +28,6 @@
         <h1 class="text-center mb-4">Modifier une Photo</h1>
         <form th:action="@{/photo/update/{photoId}(photoId=${photo.id})}"
               method="post"
-              enctype="multipart/form-data"
               class="form-section p-4 border rounded bg-light shadow">
             <div class="mb-3">
                 <label for="title" class="form-label">Titre de la photo :</label>
@@ -33,20 +40,19 @@
             </div>
             <div class="mb-3">
                 <label for="visibility" class="form-label">Visibilité :</label>
-                <select id="visibility" name="visibility" class="form-select" onchange="toggleContactsSelection()" required>
-                    <option value="PUBLIC" th:selected="${photo.visibility == 'PUBLIC'}">Public</option>
-                    <option value="PRIVATE" th:selected="${photo.visibility == 'PRIVATE'}">Privé</option>
+                <select id="visibility" name="visibility" class="form-select" onchange="toggleContactsSection()">
+                    <option value="PUBLIC" th:selected="${photo.visibility.toString() == 'PUBLIC'}">Public</option>
+                    <option value="PRIVATE" th:selected="${photo.visibility.toString() == 'PRIVATE'}">Privé</option>
                 </select>
             </div>
-            <!-- Section pour sélectionner les contacts -->
-            <div id="contactsSelection" class="mb-3" style="display: none;"
-                 th:style="'display:' + (photo.visibility == 'PRIVATE' ? 'block' : 'none')">
+
+            <div id="contactsSection" class="mb-3" th:classappend="${photo.visibility.toString() == 'PRIVATE'} ? '' : 'd-none'">
                 <label for="contacts" class="form-label">Partager avec :</label>
                 <select id="contacts" name="contacts" class="form-select" multiple>
                     <option th:each="contact : ${contacts}"
                             th:value="${contact.id}"
-                            th:text="${contact.username}"
-                            th:selected="${#lists.contains(sharedWith, contact)}">
+                            th:text="${contact.contact.username}"
+                            th:selected="${sharedWith.contains(contact)}">
                     </option>
                 </select>
                 <small class="form-text text-muted">Maintenez la touche Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs utilisateurs.</small>
@@ -61,15 +67,24 @@
 <div th:replace="~{layout/footer.html}"></div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        toggleContactsSelection(); // Appliquer la bonne visibilité lors du chargement initial
+    function toggleContactsSection() {
+        const visibility = document.getElementById('visibility').value;
+        const contactsSection = document.getElementById('contactsSection');
+
+        if (visibility === 'PRIVATE') {
+            contactsSection.classList.remove('d-none'); // Affiche la section
+        } else {
+            contactsSection.classList.add('d-none'); // Cache la section
+        }
+
+        console.log(`Visibilité : ${visibility}, Classe appliquée : ${contactsSection.classList}`);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        toggleContactsSection();
     });
 
-    function toggleContactsSelection() {
-        const visibility = document.getElementById('visibility').value;
-        const contactsSection = document.getElementById('contactsSelection');
-        contactsSection.style.display = visibility === 'PRIVATE' ? 'block' : 'none';
-    }
+    document.getElementById('visibility').addEventListener('change', toggleContactsSection);
 </script>
 </body>
 </html>

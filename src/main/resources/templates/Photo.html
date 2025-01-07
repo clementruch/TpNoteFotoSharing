@@ -51,7 +51,6 @@
 
     <div th:if="${!#lists.isEmpty(photosWithPermissions)}" class="row g-3 photo-gallery">
         <div th:each="photoData : ${photosWithPermissions}" class="col-md-4">
-            <!-- Ensure 'photoData.photo' is not null -->
             <div th:if="${photoData.photo != null}">
                 <a th:href="@{/photo/{id}(id=${photoData.photo.id ?: 0})}" class="card-link">
                     <div class="card">
