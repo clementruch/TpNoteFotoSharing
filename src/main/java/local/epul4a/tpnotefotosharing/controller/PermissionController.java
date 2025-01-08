@@ -14,7 +14,6 @@ public class PermissionController {
     @Autowired
     private PermissionService permissionService;
 
-    // Attribuer une permission à un utilisateur sur une photo
     @PostMapping("/grant")
     public String grantPermission(@RequestParam Long photoId,
                                   @RequestParam Long userId,
@@ -23,7 +22,6 @@ public class PermissionController {
         return "redirect:/photo/Photo";
     }
 
-    // Supprimer une permission d'un utilisateur sur une photo
     @PostMapping("/revoke")
     public String revokePermission(@RequestParam Long photoId,
                                    @RequestParam Long userId) {
@@ -31,7 +29,6 @@ public class PermissionController {
         return "redirect:/photo/Photo";
     }
 
-    // Afficher les permissions d'une photo
     @GetMapping("/list/{photoId}")
     public String listPermissions(@PathVariable Long photoId, Model model) {
         model.addAttribute("permissions", permissionService.getPermissionsForPhoto(photoId));

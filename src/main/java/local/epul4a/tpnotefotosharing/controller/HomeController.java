@@ -37,10 +37,9 @@ public class HomeController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        List<Album> albums = albumService.getAlbumsByOwnerUsername(username); // Récupérer les albums de l'utilisateur
+        List<Album> albums = albumService.getAlbumsByOwnerUsername(username);
         model.addAttribute("albums", albums);
 
-        // Récupère la liste des photos partagées
         List<Photo> photos = photoService.getPhotosForUser(user.getId());
         model.addAttribute("photos", photos);
 

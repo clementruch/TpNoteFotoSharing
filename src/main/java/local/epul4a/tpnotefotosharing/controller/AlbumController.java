@@ -29,16 +29,14 @@ public class AlbumController {
 
     @GetMapping("/{id}")
     public String viewAlbum(@PathVariable Long id, Model model) {
-        // Récupérer les détails de l'album
         Album album = albumService.getAlbumById(id);
         if (album == null) {
             throw new RuntimeException("Album not found with ID: " + id);
         }
 
-        // Ajouter l'album et ses photos au modèle
         model.addAttribute("album", album);
         model.addAttribute("photos", album.getPhotos());
-        return "albumDetails"; // Retourne le fichier albumDetails.html
+        return "albumDetails";
     }
 
     @GetMapping("/add")
@@ -52,8 +50,8 @@ public class AlbumController {
                            @RequestParam(required = false) String description,
                            @RequestParam Album.Visibility visibility,
                            Authentication authentication) {
-        String username = authentication.getName(); // Récupération du nom d'utilisateur connecté
-        User owner = userService.getUserByUsername(username); // Récupération de l'utilisateur connecté
+        String username = authentication.getName();
+        User owner = userService.getUserByUsername(username);
         albumService.createAlbum(name, title, description, visibility, owner.getId());
         return "redirect:/albums";
     }

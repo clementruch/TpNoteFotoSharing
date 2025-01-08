@@ -23,7 +23,7 @@ public class Contact {
     @Getter
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // L'utilisateur qui ajoute un contact
+    private User user;
 
     public void setUser(User user) {
         this.user = user;
@@ -31,7 +31,7 @@ public class Contact {
 
     @ManyToOne
     @JoinColumn(name = "contact_id", nullable = false)
-    private User contact; // Le contact ajouté
+    private User contact;
 
     @Enumerated(EnumType.STRING)
     private ContactStatus status;
@@ -46,5 +46,5 @@ public class Contact {
     private boolean selected = false;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now(); // Date d'ajout
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
